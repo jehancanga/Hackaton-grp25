@@ -101,11 +101,26 @@ build_images() {
   echo "✅ Images construites"
 }
 
-# Nettoyer l'environnement
+# Nettoyage basic (juste les conteneurs et volumes du projet)
 clean_environment() {
-  echo "🧹 Nettoyage de l'environnement..."
+  echo "🧹 Nettoyage de l'environnement du projet..."
   $COMPOSE_CMD down -v
-  echo "✅ Environnement nettoyé"
+  echo "✅ Projet nettoyé"
+}
+
+# Nettoyage complet et agressif (TOUT Docker)
+clean_all_environment() {
+  echo "🧹 Nettoyage COMPLET de l'environnement Docker..."
+  $COMPOSE_CMD down -v
+  $COMPOSE_CMD rm -f
+  docker stop $(docker ps -qa) 2>/dev/null
+  docker rm $(docker ps -qa) 2>/dev/null
+  docker rmi -f $(docker images -qa) 2>/dev/null
+  docker volume rm $(docker volume ls -q) 2>/dev/null
+  docker network rm $(docker network ls -q) 2>/dev/null
+  docker system prune -a --volume 2>/dev/null
+  docker system prune -a --force 2>/dev/null
+  echo "✅ Environnement Docker ENTIÈREMENT nettoyé"
 }
 
 # Vérifier les dépendances
@@ -185,6 +200,9 @@ case "$1" in
     ;;
   clean)
     clean_environment
+    ;;
+  cleanall)
+    clean_all_environment
     ;;
   help|*)
     show_help
