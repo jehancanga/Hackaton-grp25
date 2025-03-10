@@ -11,6 +11,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
+      - MONGO_URI=${MONGO_URI}
       - CHOKIDAR_USEPOLLING=true # Required for hot-reloading in Windows
       # - NODE_ENV=development
     networks:
@@ -27,6 +28,16 @@ services:
       - /app/node_modules
     networks:
       - app-network
+    
+  # bot:
+  #   build: ./bot
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - MONGO_URI=${MONGO_URI}
+  #   networks:
+  #     - app-network
+
 
 networks:
   app-network:
