@@ -11,6 +11,24 @@ app.use(express.json());
 // Variables d'environnement
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://bot:5000';
 
+// Route de test de base
+app.get('/', (req, res) => {
+  res.json({ message: 'Backend API is running' });
+});
+
+// Route de test pour l'API
+app.get('/api', (req, res) => {
+  res.json({ 
+    message: 'API is running', 
+    endpoints: [
+      '/api/emotions/analyze',
+      '/api/feed/personalized/:userId' 
+    ]
+  });
+});
+
+//---------------------------------------------------------------------------------------------------- 
+
 // Route pour analyser les émotions
 app.post('/api/emotions/analyze', async (req, res) => {
   try {
@@ -29,6 +47,8 @@ app.post('/api/emotions/analyze', async (req, res) => {
   }
 });
 
+//---------------------------------------------------------------------------------------------------- 
+
 // Route pour obtenir des recommandations personnalisées
 app.get('/api/feed/personalized/:userId', async (req, res) => {
   try {
@@ -44,8 +64,19 @@ app.get('/api/feed/personalized/:userId', async (req, res) => {
   }
 });
 
-// Autres routes existantes...
+//---------------------------------------------------------------------------------------------------- 
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+
+//---------------------------------------------------------------------------------------------------- 
+
+//---------------------------------------------------------------------------------------------------- 
+
+
+//---------------------------------------------------------------------------------------------------- 
+
+
+// // Autres routes existantes...
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });

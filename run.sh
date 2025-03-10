@@ -93,7 +93,7 @@ restart_containers() {
 # Afficher les logs
 show_logs() {
   echo "📋 Affichage des logs (Ctrl+C pour quitter)..."
-  $COMPOSE_CMD logs -f
+  $COMPOSE_CMD logs
 }
 
 # Construire les images
