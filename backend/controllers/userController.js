@@ -22,18 +22,30 @@ export const registerUser = async (req, res) => {
 // 🔑 Connexion
 export const loginUser = async (req, res) => {
     try {
+        console.log("📩 Données reçues :", req.body);
+
         const { email, password } = req.body;
         const user = await User.findOne({ email });
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user) {
+            console.log("❌ Utilisateur non trouvé");
             return res.status(400).json({ message: "Email ou mot de passe incorrect" });
         }
 
-        // Générer un token JWT
+        console.log("✅ Utilisateur trouvé :", user);
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            console.log("❌ Mot de passe incorrect");
+            return res.status(400).json({ message: "Email ou mot de passe incorrect" });
+        }
+
+        console.log("🔑 Connexion réussie, génération du token...");
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         res.json({ token, user });
     } catch (error) {
+        console.error("❌ Erreur serveur :", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
