@@ -199,6 +199,11 @@ Si les ports 80 ou 8080 sont déjà utilisés, modifiez docker-compose.yml pour 
 
 Ce projet est réalisé par Axel Beaugand, Aymane Hajli, Emilie Delrue, Jehan Canga Fanguinove, Louis Barthes et Said Mekaouar. 🎉
 
+## 📁 Gestion du projet
+
+Sous Microsofts Lists :
+https://testipformation-my.sharepoint.com/:l:/g/personal/a_beaugrand_ecole-ipssi_net/FEm1GV1Bd6hElWGJlpXtQ4oBM_Gir0Wmjrhv2HeLVsrxyQ?e=Wz1UIT 
+
 ## ⚡ Licence
 
 Projet open-source sous MIT License.
