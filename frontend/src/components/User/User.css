@@ -1,0 +1,21 @@
+.nav-tabs .nav-link {
+    color: #1da1f2;
+    border: none;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: #000;
+    border-bottom: 2px solid #1da1f2;
+  }
+  
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .profile-picture {
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    border: 3px solid white;
+  }
