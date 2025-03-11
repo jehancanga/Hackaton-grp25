@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     isAdmin: { type: Boolean, default: false },
+    bannerPic: { type: String, default: "https://via.placeholder.com/800x200" },
   },
   { timestamps: true }
 );
