@@ -1,0 +1,90 @@
+/* Style du Header */
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #4a59b0;
+    padding: 15px 20px;
+    color: white;
+  }
+  
+  /* Partie supérieure avec le logo, la recherche et le profil */
+  .header-top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Logo */
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  /* Barre de recherche agrandie */
+  .search-bar {
+    flex-grow: 1;
+    max-width: 500px; /* Largeur max */
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 8px;
+    border-radius: 8px;
+  }
+  
+  .search-bar input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .clear-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 10px;
+    color: #333;
+  }
+  
+  /* Navigation centrée sous la barre de recherche */
+  .nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 15px;
+  }
+  
+  .nav-item {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .nav-item:hover {
+    text-decoration: underline;
+  }
+  
+  /* Profil utilisateur */
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .user-icon {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+  }
+  
+  .username {
+    font-size: 16px;
+  }
+  
