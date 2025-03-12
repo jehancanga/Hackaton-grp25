@@ -1,104 +1,237 @@
-/* Style du Header */
+/* Style du Header amélioré */
 .header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #4a59b0;
-    padding: 15px 20px;
-    color: white;
-  }
-  
-  /* Partie supérieure avec le logo, la recherche et le profil */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #4a59b0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 12px 20px;
+  color: white;
+}
+
+/* Partie supérieure avec le logo, la recherche et le profil */
+.header-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Logo */
+.logo {
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.logo:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Barre de recherche améliorée */
+.search-bar {
+  flex-grow: 1;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 15px;
+  border-radius: 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar:focus-within {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.search-bar input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 5px;
+  background: transparent;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+  color: #666;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* Navigation centrée sous la barre de recherche */
+.nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  width: 100%;
+  margin-top: 15px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-item {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  text-decoration: none;
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover::after {
+  width: 80%;
+  left: 10%;
+}
+
+/* Profil utilisateur en haut à droite */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px;
+  border-radius: 24px;
+  transition: all 0.2s ease;
+}
+
+.user-info:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease;
+}
+
+.user-info:hover .user-avatar {
+  border-color: white;
+}
+
+.username-link {
+  text-decoration: none;
+  color: white;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  background-color: rgba(255, 75, 92, 0.85);
+  border: none;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn:hover {
+  background-color: #ff4b5c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Boutons d'authentification */
+.login-btn, .register-btn {
+  padding: 8px 16px;
+  border-radius: 18px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.login-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.register-btn {
+  background-color: #ff4b5c;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.register-btn:hover {
+  background-color: #ff3c4e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
   .header-top {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  /* Logo */
-  .logo {
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  /* Barre de recherche agrandie */
-  .search-bar {
-    flex-grow: 1;
-    max-width: 500px;
-    display: flex;
-    align-items: center;
-    background: white;
-    padding: 8px;
-    border-radius: 8px;
-  }
-  
-  .search-bar input {
-    flex-grow: 1;
-    border: none;
-    outline: none;
-    font-size: 16px;
-  }
-  
-  .clear-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    margin-left: 10px;
-    color: #333;
-  }
-  
-  /* Navigation centrée sous la barre de recherche */
-  .nav-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-    margin-top: 15px;
-  }
-  
-  .nav-item {
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .nav-item:hover {
-    text-decoration: underline;
-  }
-  
-  /* Profil utilisateur en haut à droite */
-  .user-info {
-    display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
   }
   
-  .user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
+  .search-bar {
+    order: 3;
+    max-width: 100%;
+    margin-top: 10px;
+    width: 100%;
   }
   
-  .username {
-    font-size: 16px;
-    font-weight: bold;
+  .logo {
+    margin-right: auto;
   }
   
-  .logout-btn {
-    background-color: #ff4b5c;
-    border: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
+  .user-info {
+    margin-left: auto;
   }
   
-  .logout-btn:hover {
-    background-color: #e03e4d;
+  .nav-links {
+    overflow-x: auto;
+    padding-bottom: 5px;
   }
-  
+}
