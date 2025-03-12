@@ -14,13 +14,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("📤 Données envoyées :", formData);
+
     const data = await loginUser(formData);
     if (data) {
+      console.log("✅ Réponse du serveur :", data);
+      console.log("🔑 Token reçu :", data.token);
+      console.log("👤 Utilisateur connecté :", data.user);
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+
       navigate("/");
       window.location.reload();
     } else {
+      console.error("❌ Échec de la connexion : Email ou mot de passe incorrect.");
       setError("Email ou mot de passe incorrect.");
     }
   };

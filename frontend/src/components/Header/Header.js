@@ -7,12 +7,16 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   
-  const DEFAULT_PROFILE_PIC =
-    `${process.env.PUBLIC_URL}/Images/defaultuser.jpg`;
+  const DEFAULT_PROFILE_PIC = `${process.env.PUBLIC_URL}/Images/defaultuser.jpg`;
 
   useEffect(() => {
-    setUser(getCurrentUser());
-    
+    const currentUser = getCurrentUser();
+    console.log("Utilisateur récupéré :", currentUser);
+    if (currentUser) {
+      console.log("Photo de profil de l'utilisateur :", currentUser.profilePic);
+    }
+    setUser(currentUser);
+
     const startAutoLogout = () => {
       let timeout;
 
@@ -69,6 +73,10 @@ const Header = () => {
               src={user.profilePic || DEFAULT_PROFILE_PIC}
               alt="Profil"
               className="user-avatar"
+              onError={(e) => {
+                e.target.src = DEFAULT_PROFILE_PIC;
+                console.error("⚠️ Erreur lors du chargement de l'image de profil, utilisation de l'image par défaut.");
+              }}
             />
             <Link to="/settings" className="username-link">
               <span className="username">{user.username}</span>
@@ -76,6 +84,7 @@ const Header = () => {
             <button className="logout-btn" onClick={handleLogout}>
               Disconnect
             </button>
+            {console.log("Image utilisée :", user.profilePic || DEFAULT_PROFILE_PIC)}
           </div>
         )}
       </div>
@@ -83,7 +92,7 @@ const Header = () => {
       {/* Navigation centrée avec authentification */}
       <div className="nav-links">
         <Link to="/" className="nav-item">My Feed</Link>
-        {user &&<Link to="/myposts" className="nav-item">My Posts</Link>}
+        {user && <Link to="/myposts" className="nav-item">My Posts</Link>}
         {user && <Link to="/newpost" className="nav-item">New Post</Link>}  {/* ✅ Ajout du lien "New Post" */}
 
         {/* Authentification */}

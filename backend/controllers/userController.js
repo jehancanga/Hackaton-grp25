@@ -77,36 +77,56 @@ export const getUserProfile = async (req, res) => {
 // ✏️ Modifier le profil utilisateur (photo de profil, bannière, pseudo, bio, email facultatif)
 export const updateUserProfile = async (req, res) => {
     try {
+        // 🔍 Log des données reçues
+        console.log("📩 Données reçues pour mise à jour du profil :", req.body);
+
         const { username, profilePic, bannerPic, bio, email } = req.body;
         const user = await User.findById(req.user.id);
+
         if (!user) {
-
+            console.error("❌ Utilisateur non trouvé :", req.user.id);
             return res.status(404).json({ message: "Utilisateur non trouvé" });
-
         }
 
         // Mise à jour des champs uniquement si ils sont fournis
-        if (username) user.username = username;
-        if (profilePic) user.profilePic = profilePic;
-        if (bannerPic) user.bannerPic = bannerPic;
-        if (bio) user.bio = bio;
+        if (username) {
+            console.log("👤 Mise à jour du username :", username);
+            user.username = username;
+        }
+        if (profilePic) {
+            console.log("🖼️ Mise à jour de la photo de profil :", profilePic.substring(0, 100) + "..."); // Afficher seulement une partie si c'est Base64
+            user.profilePic = profilePic;
+        }
+        if (bannerPic) {
+            console.log("🎨 Mise à jour de la bannière :", bannerPic);
+            user.bannerPic = bannerPic;
+        }
+        if (bio) {
+            console.log("📝 Mise à jour de la bio :", bio);
+            user.bio = bio;
+        }
+
         if (email && email !== user.email) {
+            console.log("📧 Vérification de l'email :", email);
             // Vérifier si l'email est déjà utilisé par un autre utilisateur
             const emailExists = await User.findOne({ email });
             if (emailExists) {
+                console.warn("⚠️ Email déjà utilisé par un autre compte :", email);
                 return res.status(400).json({ message: "Cet email est déjà utilisé par un autre compte." });
             }
+            console.log("✅ Mise à jour de l'email :", email);
             user.email = email;
         }
 
         await user.save();
+        console.log("✅ Profil mis à jour avec succès :", user);
+
         res.json({ message: "Profil mis à jour avec succès", user });
     } catch (error) {
-        console.error("Erreur mise à jour profil:", error);
+        console.error("❌ Erreur mise à jour profil:", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
-
 
 // ➕ Suivre un utilisateur
 export const followUser = async (req, res) => {

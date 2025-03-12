@@ -60,27 +60,41 @@ export const updateUserProfile = async (formData) => {
   try {
     // Récupérer directement le token
     const token = localStorage.getItem("authToken");
-    
+
     if (!token) {
       throw new Error("Non authentifié");
     }
-    
+
     // Configuration pour axios avec le token
     const config = {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     };
-    
+
+    // 🚀 Ajoute un log des données envoyées
+    for (let pair of formData.entries()) {
+      console.log(`📤 Données envoyées -> ${pair[0]}:`, pair[1]);
+    }
+
     const response = await axios.put(
       `${API_URL}/profile`,
       formData,
       config
     );
-    
+
+    // ✅ Ajoute un log de la réponse du serveur
+    console.log("✅ Réponse du serveur :", response.data);
+
     return response.data;
   } catch (error) {
-    console.error("Erreur mise à jour profil :", error.response?.data);
+    console.error("❌ Erreur mise à jour profil :", error.response?.data);
+
+    // 🚨 Ajoute un log des erreurs serveur
+    if (error.response) {
+      console.log("🔴 Erreur complète du serveur :", error.response);
+    }
+
     throw error;
   }
 };

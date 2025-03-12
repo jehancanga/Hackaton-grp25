@@ -66,19 +66,13 @@ const ProfileSettings = () => {
       }
 
       setProfileImageFile(file);
-      
-      // Utilisation de FileReader au lieu de URL.createObjectURL
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setProfileImage(event.target.result);
+        console.log("🖼️ Image encodée en Base64 :", event.target.result);
       };
       reader.readAsDataURL(file);
-
-      toast.info("Image sélectionnée. N'oubliez pas de sauvegarder pour l'appliquer.", {
-        autoClose: 3000
-      });
-
-
     }
   };
 
@@ -102,8 +96,10 @@ const ProfileSettings = () => {
         formData.append("profileImage", profileImageFile);
       }
 
+      console.log("📤 Données envoyées au backend :", Object.fromEntries(formData));
+
       const result = await updateUserProfile(formData);
-      console.log("Résultat de la mise à jour:", result);
+      console.log("✅ Réponse du serveur :", result);
 
       const currentUser = getCurrentUser();
       if (currentUser) {
@@ -111,7 +107,7 @@ const ProfileSettings = () => {
           ...currentUser,
           username,
           bio,
-          profilePic: result.profilePic || profileImage
+          profilePic: result.profilePic || profileImage,
         };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       }
@@ -120,10 +116,9 @@ const ProfileSettings = () => {
         render: "Profil mis à jour avec succès ! ✅",
         type: "success",
         isLoading: false,
-        autoClose: 3000
+        autoClose: 3000,
       });
 
-      window.location.reload();
     } catch (error) {
       console.error("❌ Erreur lors de la mise à jour du profil :", error);
 
@@ -131,7 +126,7 @@ const ProfileSettings = () => {
         render: error.response?.data?.message || "Erreur lors de la mise à jour du profil",
         type: "error",
         isLoading: false,
-        autoClose: 5000
+        autoClose: 5000,
       });
     } finally {
       setIsLoading(false);
