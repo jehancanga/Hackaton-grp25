@@ -1,0 +1,38 @@
+
+.comments-container {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e6ecf0;
+    
+    .comments-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #14171a;
+    }
+    
+    .comments-loading {
+      text-align: center;
+      padding: 20px;
+      color: #657786;
+    }
+    
+    .comments-error {
+      text-align: center;
+      padding: 12px;
+      color: #e0245e;
+      background-color: rgba(224, 36, 94, 0.1);
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    
+    .no-comments {
+      text-align: center;
+      padding: 20px;
+      color: #657786;
+      border: 1px dashed #ccd6dd;
+      border-radius: 8px;
+      font-style: italic;
+      background-color: #f7f9fa;
+    }
+  }
