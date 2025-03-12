@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,17 +10,34 @@ import NewPost from "./components/NewPost/NewPost";
 import MyPosts from "./components/MyPosts/MyPosts";
 import Settings from "./components/settings/settings";
 import ProfilUser from "./components/profilUser/profilUser";
+import EmotionDetector from "./components/EmotionDetector/EmotionDetector";
+import RecommendedFeed from "./components/RecommendedFeed/RecommendedFeed";
 
 function App() {
+  const [detectedEmotion, setDetectedEmotion] = useState(null);
+  
+  const handleEmotionDetected = (emotion) => {
+    setDetectedEmotion(emotion);
+  };
+
   return (
     <Router>
       <div className="App">
         <Header />
+        
         <Routes>
-          <Route path="/" element={<Feed />} />
+          <Route path="/" element={
+            <>
+              <EmotionDetector onEmotionDetected={handleEmotionDetected} />
+              {detectedEmotion && <RecommendedFeed emotion={detectedEmotion} />}
+              <Feed />
+            </>
+          } />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/newpost" element={<NewPost />} />
+          <Route path="/newpost" element={
+            <NewPost detectedEmotion={detectedEmotion} />
+          } />
           <Route path="/myposts" element={<MyPosts />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/profil/:userId" element={<ProfilUser />} />

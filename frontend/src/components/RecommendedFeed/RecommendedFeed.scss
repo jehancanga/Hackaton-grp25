@@ -1,0 +1,43 @@
+// frontend/src/components/RecommendedFeed/RecommendedFeed.scss
+.recommended-feed {
+  max-width: 650px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .feed-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .emotion-tag {
+      background-color: #4a59b0;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+  }
+  
+  .loading, .error, .no-posts {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+  }
+  
+  .error {
+    color: #dc3545;
+  }
+  
+  .posts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}

@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { createTweet } from "../../services/apiPosts";
 import "./NewPost.scss";
 
-const NewPost = ({ onPostCreated }) => {
+// Ajoutez detectedEmotion aux props
+const NewPost = ({ onPostCreated, detectedEmotion }) => {
   const [formData, setFormData] = useState({ content: "", media: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -29,11 +30,12 @@ const NewPost = ({ onPostCreated }) => {
       return;
     }
 
-    // Construire l'objet tweet avec userId
+    // Construire l'objet tweet avec userId et l'émotion détectée
     const tweetData = {
       userId: user._id,
       content: formData.content,
       media: formData.media || "",
+      detectedEmotion: detectedEmotion || "neutral" // Inclure l'émotion détectée
     };
 
     console.log("🔍 Données envoyées au backend :", tweetData);
@@ -60,6 +62,14 @@ const NewPost = ({ onPostCreated }) => {
     <div className="newpost-container">
       <h2>Créer un nouveau post</h2>
       {error && <p className="error">{error}</p>}
+      
+      {/* Afficher l'émotion détectée si disponible */}
+      {detectedEmotion && (
+        <div className="detected-emotion">
+          Detection émotion actuelle: <span className="emotion">{detectedEmotion}</span>
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit}>
         <textarea
           name="content"

@@ -1,0 +1,55 @@
+// frontend/src/components/EmotionDetector/EmotionDetector.scss
+.emotion-detector {
+  max-width: 360px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .video-container {
+    position: relative;
+    margin-bottom: 15px;
+    
+    video {
+      width: 100%;
+      border-radius: 8px;
+    }
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    
+    button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      
+      &.start-webcam {
+        background-color: #4a59b0;
+        color: white;
+      }
+      
+      &.stop-webcam {
+        background-color: #ff4b5c;
+        color: white;
+      }
+    }
+  }
+  
+  .current-emotion {
+    text-align: center;
+    font-size: 16px;
+    padding: 10px;
+    
+    .emotion {
+      font-weight: bold;
+      color: #4a59b0;
+      text-transform: capitalize;
+    }
+  }
+}
