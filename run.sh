@@ -58,6 +58,7 @@ show_help() {
   echo "  logs    - Afficher les logs"
   echo "  build   - Reconstruire les images"
   echo "  clean   - Supprimer tous les conteneurs et volumes"
+  echo "  cleanall- Supprimer TOUT l'environnement Docker"
   echo "  help    - Afficher cette aide"
   echo ""
   echo "Exemple: ./run.sh start"
@@ -72,6 +73,7 @@ start_containers() {
   echo "✅ Applications démarrées!"
   echo "🌐 Frontend: http://localhost"
   echo "🔌 Backend: http://localhost:3000"
+  echo "🤖 Service IA: http://localhost:5000"
 }
 
 # Arrêter les conteneurs
@@ -91,7 +93,7 @@ restart_containers() {
 # Afficher les logs
 show_logs() {
   echo "📋 Affichage des logs (Ctrl+C pour quitter)..."
-  $COMPOSE_CMD logs -f
+  $COMPOSE_CMD logs
 }
 
 # Construire les images
