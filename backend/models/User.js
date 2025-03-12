@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     isAdmin: { type: Boolean, default: false },
     bannerPic: { type: String, default: "https://via.placeholder.com/800x200" },
+    blockedUsers: {type: [mongoose.Schema.Types.ObjectId],ref: "User",default: [],},
   },
   { timestamps: true }
 );

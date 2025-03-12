@@ -67,3 +67,22 @@ export const deleteComment = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
+
+// ❌ Retirer un like sur un tweet
+export const unlikeTweet = async (req, res) => {
+    try {
+        const tweet = await Tweet.findById(req.params.id);
+        if (!tweet) return res.status(404).json({ message: "Tweet non trouvé" });
+
+        if (!tweet.likes.includes(req.user.id)) {
+            return res.status(400).json({ message: "Vous n'avez pas aimé ce tweet" });
+        }
+
+        tweet.likes = tweet.likes.filter(id => id.toString() !== req.user.id);
+
+        await tweet.save();
+        res.json(tweet);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};

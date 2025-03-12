@@ -5,17 +5,26 @@ import crypto from "crypto";
 
 // 📝 Inscription
 export const registerUser = async (req, res) => {
+    console.log("📢 Route atteinte")
     try {
+        console.log("📩 Requête reçue pour l'inscription", req.body);
         const { username, email, password } = req.body;
 
         // Vérifier si l'utilisateur existe
         const userExists = await User.findOne({ email });
-        if (userExists) return res.status(400).json({ message: "Email déjà utilisé" });
+        console.log("🔍 Vérification de l'existence de l'utilisateur", userExists);
+        if (userExists) {
+            console.log("⚠️ Email déjà utilisé");
+            return res.status(400).json({ message: "Email déjà utilisé" });
+        }
 
         // Créer un nouvel utilisateur
         const user = await User.create({ username, email, password });
+        console.log("✅ Utilisateur créé avec succès", user);
+
         res.status(201).json({ message: "Utilisateur créé avec succès !" });
     } catch (error) {
+        console.error("❌ Erreur serveur", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -211,6 +220,76 @@ export const getUserFollowing = async (req, res) => {
     try {
         const user = await User.findById(req.params.id).populate("following", "username profilePic");
         res.json(user.following);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+// 📛 Bloquer un utilisateur
+export const blockUser = async (req, res) => {
+    try {
+        // Vérification si req.user est défini
+        if (!req.user) {
+            console.error('Utilisateur non authentifié');
+            return res.status(401).json({ message: "Utilisateur non authentifié" });
+        }
+
+        console.log('Début de la fonction blockUser');
+        
+        // Recherche de l'utilisateur à bloquer
+        const userToBlock = await User.findById(req.params.id);
+        console.log('Utilisateur à bloquer :', userToBlock);
+
+        if (!userToBlock) {
+            console.error('Utilisateur non trouvé');
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        // Vérification si l'utilisateur est déjà bloqué
+        const alreadyBlocked = req.user.blockedUsers.includes(req.params.id);
+        console.log('Utilisateur déjà bloqué ?', alreadyBlocked);
+
+        if (alreadyBlocked) {
+            console.error('Cet utilisateur est déjà bloqué');
+            return res.status(400).json({ message: "Cet utilisateur est déjà bloqué" });
+        }
+
+        // Bloquer l'utilisateur
+        req.user.blockedUsers.push(req.params.id);
+        await req.user.save();
+        console.log('Utilisateur bloqué avec succès', req.user);
+
+        // Répondre avec un message de succès
+        res.json({ message: `Utilisateur ${userToBlock.username} bloqué avec succès` });
+    } catch (error) {
+        console.error('Erreur serveur:', error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+
+
+// 🔓 Débloquer un utilisateur
+export const unblockUser = async (req, res) => {
+    try {
+        if (!req.user) {
+            console.error('Utilisateur non authentifié');
+            return res.status(401).json({ message: "Utilisateur non authentifié" });
+          }
+        
+        const userToUnblock = await User.findById(req.params.id);
+        
+        if (!userToUnblock) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+       const blockedIndex = req.user.blockedUsers.indexOf(req.params.id);
+        if (blockedIndex === -1) {
+            return res.status(400).json({ message: "Cet utilisateur n'est pas bloqué" });
+        }
+
+         req.user.blockedUsers.splice(blockedIndex, 1);
+        await req.user.save();
+
+        res.json({ message: `Utilisateur ${userToUnblock.username} débloqué avec succès` });
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur" });
     }

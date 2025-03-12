@@ -12,7 +12,9 @@ import {
     searchUsers,
     getAllUsers,
     getUserFollowers,
-    getUserFollowing
+    getUserFollowing, 
+    blockUser,
+    unblockUser
 } from "../controllers/userController.js";
 
 import { protect } from "../middlewares/authMiddleware.js";
@@ -32,5 +34,7 @@ router.get("/search", searchUsers);
 router.get("/", protect, getAllUsers);
 router.get("/:id/followers", protect, getUserFollowers);
 router.get("/:id/following", protect, getUserFollowing);
+router.post("/:id/block", protect, blockUser);
+router.post("/:id/unblock", protect, unblockUser);
 
 export default router;
