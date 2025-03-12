@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createTweet } from "../../services/apiPosts";
 import "./NewPost.scss";
 
-const NewPost = () => {
+const NewPost = ({ onPostCreated }) => {
   const [formData, setFormData] = useState({ content: "", media: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -31,18 +31,21 @@ const NewPost = () => {
 
     // Construire l'objet tweet avec userId
     const tweetData = {
-      userId: user._id, // On récupère l'ID utilisateur
+      userId: user._id,
       content: formData.content,
-      media: formData.media || "", // Optionnel
+      media: formData.media || "",
     };
 
-    // 🚀 LOG pour vérifier les données avant l'envoi
     console.log("🔍 Données envoyées au backend :", tweetData);
 
     try {
       const response = await createTweet(tweetData, token);
       if (response) {
         console.log("✅ Tweet créé avec succès :", response);
+        
+        // Notifier le parent que le post a été créé
+        if (onPostCreated) onPostCreated();
+        
         navigate("/");
       } else {
         setError("Erreur lors de la création du post.");

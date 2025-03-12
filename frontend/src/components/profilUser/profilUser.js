@@ -18,56 +18,70 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       setIsLoading(true);
       try {
-        // Ici, vous feriez une vraie requête API
-        // const response = await fetch(`/api/users/${userId}`);
-        // const data = await response.json();
+        const response = await fetch(`http://votre-api-backend.com/api/users/${userId}`);
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des données');
+        }
+        const userData = await response.json();
+        setUserData(userData);
+        setIsLoading(false);
         
-        // Simulation d'une réponse API
-        setTimeout(() => {
-          // Données de démonstration - à remplacer par votre API
-          const mockUserData = {
-            id: userId,
-            name: `Utilisateur ${userId}`,
-            username: `user${userId}`,
-            tweets: userId % 2 === 0 ? [
-              {
-                id: 1,
-                content: "Bonjour à tous ! C'est mon premier tweet.",
-                time: "Il y a 2 heures",
-                likes: 5,
-                retweets: 2
-              },
-              {
-                id: 2,
-                content: "J'adore cette nouvelle plateforme !",
-                time: "Il y a 1 jour",
-                likes: 12,
-                retweets: 3
-              }
-            ] : []
-          };
-          
-          setUserData(mockUserData);
-          setIsLoading(false);
-        }, 800);
       } catch (err) {
+        console.error("Erreur de chargement:", err);
         setError("Erreur lors du chargement des données");
         setIsLoading(false);
       }
     };
-
+    const checkFollowStatus = async () => {
+      try {
+        const response = await fetch(`http://votre-api-backend.com/api/users/${userId}/follow/status`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Récupérez votre token d'authentification
+          }
+        });
+        
+        if (response.ok) {
+          const { isFollowing } = await response.json();
+          setIsFollowing(isFollowing);
+        }
+      } catch (err) {
+        console.error("Erreur lors de la vérification du statut de suivi:", err);
+      }
+    };
+  
+    if (userId) {
+      fetchUserData();
+      checkFollowStatus(); // Ajoutez cet appel ici
+    }
+  
     if (userId) {
       fetchUserData();
     }
-  }, [userId]); // S'exécute à chaque changement d'ID d'utilisateur
-
-  const handleFollowClick = () => {
-    setIsFollowing(!isFollowing);
-    
-    // Ici, vous pourriez également envoyer une requête à votre API
-    // pour mettre à jour l'état de suivi
-    // fetch(`/api/users/${userId}/follow`, { method: 'POST' })
+  }, [userId]);
+  
+  const handleFollowClick = async () => {
+    try {
+      const response = await fetch(`http://votre-api-backend.com/api/users/${userId}/follow`, {
+        method: isFollowing ? 'DELETE' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Récupérez votre token d'authentification
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la modification du statut de suivi');
+      }
+      
+      setIsFollowing(!isFollowing);
+      // Vous pourriez vouloir rafraîchir d'autres données comme le nombre de followers
+      
+    } catch (err) {
+      console.error("Erreur lors du changement de statut de suivi:", err);
+      alert("Une erreur est survenue. Veuillez réessayer.");
+    }
   };
+  
 
   // Calcul des statistiques basées sur les tweets
   const tweetCount = userData.tweets ? userData.tweets.length : 0;
