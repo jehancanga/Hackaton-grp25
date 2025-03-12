@@ -84,7 +84,6 @@ const Header = () => {
       <div className="nav-links">
         <Link to="/" className="nav-item">My Feed</Link>
         {user &&<Link to="/myposts" className="nav-item">My Posts</Link>}
-        <Link to="/mypage" className="nav-item">My Page</Link>
         {user && <Link to="/newpost" className="nav-item">New Post</Link>}  {/* ✅ Ajout du lien "New Post" */}
 
         {/* Authentification */}

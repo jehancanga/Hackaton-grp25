@@ -18,12 +18,21 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/login`, credentials);
+    // Stocker le token avec la clé "authToken"
+    if (response.data.token) {
+      localStorage.setItem("authToken", response.data.token);
+      // Stocker aussi les données de l'utilisateur si nécessaire
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+    }
     return response.data;
   } catch (error) {
     console.error("Erreur de connexion :", error.response?.data);
     return null;
   }
 };
+
 
 export const logoutUser = () => {
   localStorage.removeItem("token");
@@ -46,15 +55,37 @@ export const getUserProfile = async (userId) => {
   }
 };
 
-export const updateUserProfile = async (profileData) => {
+
+export const updateUserProfile = async (formData) => {
   try {
-    const response = await axios.put(`${API_URL}/profile`, profileData, getAuthHeaders());
+    // Récupérer directement le token
+    const token = localStorage.getItem("authToken");
+    
+    if (!token) {
+      throw new Error("Non authentifié");
+    }
+    
+    // Configuration pour axios avec le token
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
+    
+    const response = await axios.put(
+      `${API_URL}/profile`,
+      formData,
+      config
+    );
+    
     return response.data;
   } catch (error) {
     console.error("Erreur mise à jour profil :", error.response?.data);
-    return null;
+    throw error;
   }
 };
+
+
 
 export const followUser = async (userId) => {
   try {

@@ -89,21 +89,3 @@ export const deleteTweet = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
-
-// 🧑‍💻 Obtenir les tweets d'un utilisateur spécifique
-export const getUserTweets = async (req, res) => {
-    try {
-        const userId = req.params.id; 
-        const tweets = await Tweet.find({ userId: userId })
-                                  .populate("userId", "username profilePic")
-                                  .sort({ createdAt: -1 });
-
-        if (!tweets || tweets.length === 0) {
-            return res.status(404).json({ message: "Aucun tweet trouvé pour cet utilisateur." });
-        }
-
-        res.status(200).json(tweets); 
-    } catch (error) {
-        res.status(500).json({ message: "Erreur serveur" });
-    }
-};

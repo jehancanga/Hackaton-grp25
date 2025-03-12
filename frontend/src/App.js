@@ -18,7 +18,6 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Feed />} />
-          <Route path="/mypage" element={<h1>My Page</h1>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/newpost" element={<NewPost />} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getCurrentUser, updateUserProfile } from "../../services/api";
+import { getCurrentUser, updateUserProfile } from "../../services/apiUsers";
 import "./settings.scss";
 
 const isAuthenticated = () => {
