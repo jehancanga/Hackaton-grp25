@@ -5,6 +5,7 @@ import Feed from "./components/Feed/Feed";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import NewPost from "./components/NewPost/NewPost";
+import MyPosts from "./components/MyPosts/MyPosts";
 
 function App() {
   return (
@@ -13,11 +14,11 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Feed />} />
-          <Route path="/myposts" element={<h1>My Posts</h1>} />
           <Route path="/mypage" element={<h1>My Page</h1>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/newpost" element={<NewPost />} />
+          <Route path="/myposts" element={<MyPosts />} />
         </Routes>
       </div>
     </Router>

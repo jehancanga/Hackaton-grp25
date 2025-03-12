@@ -1,54 +1,83 @@
 .post {
-    background: white;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .post-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
-  
-  .username {
-    margin: 0;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  .timestamp {
-    font-size: 12px;
-    color: gray;
-  }
-  
-  .content {
-    margin: 10px 0;
-  }
-  
-  .post-image {
-    width: 100%;
-    border-radius: 5px;
-    margin-top: 10px;
-  }
-  
-  .post-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .post-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
+  background: #fff;
+  padding: 15px;
+  margin: 12px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.post:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 🟢 En-tête du post */
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.username {
+  margin: 0;
+  font-size: 17px;
+  font-weight: bold;
+  color: #333;
+}
+
+.timestamp {
+  font-size: 13px;
+  color: gray;
+}
+
+/* 🟠 Contenu du post */
+.content {
+  margin: 10px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+/* 🖼 Image du post */
+.post-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+/* 🛠️ Actions du post */
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  margin-top: 8px;
+  border-top: 1px solid #ddd;
+}
+
+.post-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #555;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.3s ease-in-out;
+}
+
+.post-actions button:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #000;
+}
+

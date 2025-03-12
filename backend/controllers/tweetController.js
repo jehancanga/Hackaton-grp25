@@ -21,6 +21,25 @@ export const getTweets = async (req, res) => {
     }
 };
 
+// 📌 Obtenir les tweets d'un utilisateur spécifique
+export const getUserTweets = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const tweets = await Tweet.find({ userId: id })
+            .populate("userId", "username profilePic")
+            .sort({ createdAt: -1 });
+
+        if (!tweets.length) {
+            return res.status(404).json({ message: "Aucun tweet trouvé pour cet utilisateur" });
+        }
+
+        res.json(tweets);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+
 // ❤️ Liker un tweet
 export const likeTweet = async (req, res) => {
     try {

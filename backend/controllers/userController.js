@@ -6,19 +6,28 @@ import crypto from "crypto";
 // 📝 Inscription
 export const registerUser = async (req, res) => {
     try {
+        console.log("📩 Données reçues pour inscription :", req.body); // Log des données reçues
+
         const { username, email, password } = req.body;
 
-        // Vérifier si l'utilisateur existe
+        // Vérifier si l'utilisateur existe déjà
         const userExists = await User.findOne({ email });
-        if (userExists) return res.status(400).json({ message: "Email déjà utilisé" });
+        if (userExists) {
+            console.log("⚠️ Email déjà utilisé :", email);
+            return res.status(400).json({ message: "Email déjà utilisé" });
+        }
 
         // Créer un nouvel utilisateur
         const user = await User.create({ username, email, password });
+
+        console.log("✅ Utilisateur créé avec succès :", user);
         res.status(201).json({ message: "Utilisateur créé avec succès !" });
     } catch (error) {
+        console.error("❌ Erreur serveur lors de l'inscription :", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
+
 
 // 🔑 Connexion
 export const loginUser = async (req, res) => {
@@ -64,28 +73,39 @@ export const getUserProfile = async (req, res) => {
     }
 };
 
-// ✏️ Modifier le profil utilisateur (photo de profil, bannière, pseudo, bio)
+// ✏️ Modifier le profil utilisateur (photo de profil, bannière, pseudo, bio, email facultatif)
 export const updateUserProfile = async (req, res) => {
     try {
-        const { username, profilePic, bannerPic, bio } = req.body;
+        const { username, profilePic, bannerPic, bio, email } = req.body;
         const user = await User.findById(req.user.id);
 
         if (!user) {
             return res.status(404).json({ message: "Utilisateur non trouvé" });
         }
 
+        // Mise à jour des champs uniquement si ils sont fournis
         if (username) user.username = username;
         if (profilePic) user.profilePic = profilePic;
         if (bannerPic) user.bannerPic = bannerPic;
         if (bio) user.bio = bio;
+        if (email && email !== user.email) {
+            // Vérifier si l'email est déjà utilisé par un autre utilisateur
+            const emailExists = await User.findOne({ email });
+            if (emailExists) {
+                return res.status(400).json({ message: "Cet email est déjà utilisé par un autre compte." });
+            }
+            user.email = email;
+        }
 
         await user.save();
 
         res.json({ message: "Profil mis à jour avec succès", user });
     } catch (error) {
+        console.error("Erreur mise à jour profil:", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
+
 
 // ➕ Suivre un utilisateur
 export const followUser = async (req, res) => {
