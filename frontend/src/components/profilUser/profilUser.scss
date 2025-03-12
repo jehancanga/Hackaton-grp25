@@ -1,0 +1,189 @@
+// UserProfile.scss
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    background-color: #f8f9fa;
+  }
+  
+  .loading, .error {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .error {
+    color: #e0245e;
+  }
+  
+  .profile-container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    
+    .profile-header {
+      padding: 20px;
+      border-bottom: 1px solid #e6ecf0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: #f1f1f1;
+        margin-bottom: 15px;
+      }
+      
+      .profile-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90%;
+        text-align: center;
+      }
+      
+      .profile-username {
+        color: #657786;
+        font-size: 15px;
+        margin-bottom: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90%;
+      }
+      
+      .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        margin-bottom: 20px;
+        
+        .stat-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          
+          .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1da1f2;
+          }
+          
+          .stat-label {
+            color: #657786;
+            font-size: 14px;
+          }
+        }
+      }
+      
+      .follow-button {
+        background-color: #1da1f2;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 10px 0;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        width: 90%;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: #1a91da;
+        }
+        
+        &.unfollow {
+          background-color: #fff;
+          color: #1da1f2;
+          border: 1px solid #1da1f2;
+          
+          &:hover {
+            background-color: #f8f8f8;
+          }
+        }
+      }
+    }
+    
+    .tweet-section {
+      padding: 20px;
+      
+      .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #14171a;
+      }
+      
+      .tweets-container {
+        .tweet {
+          padding: 15px;
+          border-bottom: 1px solid #e6ecf0;
+          
+          &:last-child {
+            border-bottom: none;
+          }
+          
+          .tweet-content {
+            font-size: 15px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+          }
+          
+          .tweet-time {
+            color: #657786;
+            font-size: 13px;
+            margin-bottom: 8px;
+          }
+          
+          .tweet-stats {
+            font-size: 13px;
+            color: #657786;
+            
+            span {
+              margin-right: 5px;
+              margin-left: 5px;
+              
+              &:first-child {
+                margin-left: 0;
+              }
+            }
+          }
+        }
+        
+        .no-tweets {
+          color: #657786;
+          font-style: italic;
+          text-align: center;
+          padding: 20px;
+        }
+      }
+    }
+  }
+  
+  // Animation pour les états de chargement
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+  
+  .loading {
+    animation: pulse 1.5s infinite;
+  }
