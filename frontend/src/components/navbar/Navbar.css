@@ -1,45 +1,117 @@
-/* Styles généraux */
+/* 🌟 Style général de la navbar */
 .navbar {
-    transition: all 0.3s ease-in-out;
-  }
-  
-  /* Logo */
-  .logo-text {
-    font-size: 1.4rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-    transition: color 0.3s;
-  }
-  
-  .logo-text:hover {
-    color: #ffdd57;
-  }
-  
-  /* Effet de survol sur les liens */
-  .navbar-nav .nav-link {
-    transition: color 0.3s ease-in-out;
-  }
-  
-  .navbar-nav .nav-link:hover {
-    color: #ffdd57 !important;
-  }
-  
-  /* Boutons */
-  .btn {
-    transition: all 0.3s ease-in-out;
-  }
-  
-  .btn:hover {
-    transform: scale(1.05);
-  }
-  
-  /* Avatar du menu utilisateur */
-  .nav-item.dropdown .nav-link img {
-    border: 2px solid white;
-    transition: transform 0.3s;
-  }
-  
-  .nav-item.dropdown .nav-link:hover img {
-    transform: scale(1.1);
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 15px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #007bff;
+}
+
+/* 🔔 Icône de notifications */
+.notifications-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.bell-icon {
+  position: relative;
+}
+
+.notification-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 📜 Menu déroulant des notifications */
+.notification-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 280px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 10;
+}
+
+.notification-dropdown h4 {
+  margin: 0;
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.notification-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item .icon {
+  font-size: 18px;
+}
+
+.like {
+  color: red;
+}
+
+.comment {
+  color: blue;
+}
+
+.mention {
+  color: green;
+}
+
+.notification-item span {
+  flex: 1;
+  font-size: 14px;
+}

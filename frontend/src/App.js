@@ -11,6 +11,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 
 
+
 function App() {
 
 
@@ -20,6 +21,7 @@ function App() {
     
     <Router>
       <Navbar />
+     
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -27,6 +29,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<UserProfile />} /> 
         <Route path="/messaging" element={<MessagingPage />} />
+        
         <Route path="/" element={<Feed />} /> {/* Page principale */}
       </Routes>
     </Router>
