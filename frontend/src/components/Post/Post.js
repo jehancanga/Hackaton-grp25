@@ -1,11 +1,17 @@
 import React from "react";
 import "./Post.scss";
 
+const DEFAULT_PROFILE_PIC = `${process.env.PUBLIC_URL}/images/defaultuser.jpg`;
+
 const Post = ({ post }) => {
   return (
     <div className="post">
       <div className="post-header">
-        <img src={post.userAvatar} alt="Avatar" className="avatar" />
+        <img
+          src={post.userAvatar || DEFAULT_PROFILE_PIC}
+          alt="Avatar"
+          className="avatar"
+        />
         <div>
           <h3 className="username">{post.username}</h3>
           <p className="timestamp">{post.timestamp}</p>

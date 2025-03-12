@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../services/api";
+import { registerUser } from "../../services/apiUsers";
 import "./Register.scss";
 
 const Register = () => {
@@ -14,6 +14,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("📤 Données envoyées :", formData); // Vérification des données envoyées
     const data = await registerUser(formData);
     if (data) {
       navigate("/login");

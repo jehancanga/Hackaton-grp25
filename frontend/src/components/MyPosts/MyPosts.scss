@@ -1,0 +1,23 @@
+.myposts {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+    h2 {
+      text-align: center;
+      color: #4a59b0;
+    }
+  
+    .error {
+      color: red;
+      text-align: center;
+    }
+  
+    .post-list {
+      margin-top: 20px;
+    }
+  }
+  

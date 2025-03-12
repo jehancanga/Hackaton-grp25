@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getCurrentUser, logoutUser } from "../../services/api";
+import { getCurrentUser, logoutUser } from "../../services/apiUsers";
 import "./Header.scss";
 
 const Header = () => {
@@ -12,12 +12,42 @@ const Header = () => {
 
   useEffect(() => {
     setUser(getCurrentUser());
+    
+    const startAutoLogout = () => {
+      let timeout;
+
+      const resetTimer = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          console.warn("🚨 Inactivité détectée : Déconnexion...");
+          handleLogout();
+        }, 300000); // 5 minutes
+      };
+
+      // Ajouter les événements
+      window.addEventListener("mousemove", resetTimer);
+      window.addEventListener("keydown", resetTimer);
+      resetTimer(); // Démarrer immédiatement
+
+      return () => {
+        clearTimeout(timeout);
+        window.removeEventListener("mousemove", resetTimer);
+        window.removeEventListener("keydown", resetTimer);
+      };
+    };
+
+    const cleanup = startAutoLogout();
+
+    return () => {
+      cleanup(); // Nettoyage propre lors du démontage du composant
+    };
   }, []);
 
+  // Fonction de déconnexion
   const handleLogout = () => {
     logoutUser();
     setUser(null);
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -32,7 +62,7 @@ const Header = () => {
           <button className="clear-btn">✖</button>
         </div>
 
-        {/* Profil utilisateur affiché seulement si connecté */}
+        {/* Profil utilisateur */}
         {user && (
           <div className="user-info">
             <img
@@ -44,7 +74,7 @@ const Header = () => {
               <span className="username">{user.username}</span>
             </Link>
             <button className="logout-btn" onClick={handleLogout}>
-              Déconnexion
+              Disconnect
             </button>
           </div>
         )}
@@ -53,17 +83,15 @@ const Header = () => {
       {/* Navigation centrée avec authentification */}
       <div className="nav-links">
         <Link to="/" className="nav-item">My Feed</Link>
-        <Link to="/myposts" className="nav-item">My Posts</Link>
+        {user &&<Link to="/myposts" className="nav-item">My Posts</Link>}
         <Link to="/mypage" className="nav-item">My Page</Link>
-
-        {/* Lien vers la création d'un nouveau post */}
-        {user && <Link to="/newpost" className="nav-item newpost-btn">Créer un post</Link>}
+        {user && <Link to="/newpost" className="nav-item">New Post</Link>}  {/* ✅ Ajout du lien "New Post" */}
 
         {/* Authentification */}
         {!user && (
           <>
-            <Link to="/login" className="nav-item login-btn">Se connecter</Link>
-            <Link to="/register" className="nav-item register-btn">Créer un compte</Link>
+            <Link to="/login" className="nav-item login-btn">Connexion</Link>
+            <Link to="/register" className="nav-item register-btn">New Account</Link>
           </>
         )}
       </div>
