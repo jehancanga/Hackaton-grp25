@@ -1,4 +1,4 @@
-# version: '3.8'
+version: "3.8"
 
 services:
   frontend:
@@ -11,32 +11,35 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - MONGO_URI=${MONGO_URI}
-      - CHOKIDAR_USEPOLLING=true # Required for hot-reloading in Windows
+      - CHOKIDAR_USEPOLLING=true
     networks:
       - app-network
 
   backend:
     build: ./backend
     ports:
-      - "8080:3000"
+      - "3000:3000"
+    depends_on:
+      - mongodb
     environment:
       - NODE_ENV=development
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    networks:
-      - app-network
-    
-  bot:
-    build: ./bot
-    ports:
-      - "5000:5000"
-    environment:
-      - MONGO_URI=${MONGO_URI}
+      - MONGO_URI=mongodb://mongodb:27017/biblio
     networks:
       - app-network
 
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
 
 networks:
   app-network:

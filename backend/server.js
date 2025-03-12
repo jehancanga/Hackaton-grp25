@@ -1,82 +1,34 @@
-// Dans votre fichier server.js
-const express = require('express');
-const axios = require('axios');
-const path = require('path');
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import connectDB from "./config/db.js";
+
+import userRoutes from "./routes/userRoutes.js";
+import tweetRoutes from "./routes/tweetRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+
+dotenv.config();
+connectDB();
+
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware pour parser le JSON
 app.use(express.json());
+app.use(cors());
 
-// Variables d'environnement
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://bot:5000';
-
-// Route de test de base
-app.get('/', (req, res) => {
-  res.json({ message: 'Backend API is running' });
-});
-
-// Route de test pour l'API
-app.get('/api', (req, res) => {
-  res.json({ 
-    message: 'API is running', 
-    endpoints: [
-      '/api/emotions/analyze',
-      '/api/feed/personalized/:userId' 
-    ]
-  });
-});
-
-//---------------------------------------------------------------------------------------------------- 
-
-// Route pour analyser les émotions
-app.post('/api/emotions/analyze', async (req, res) => {
-  try {
-    // Transférer la requête au service d'IA
-    const response = await axios.post(`${AI_SERVICE_URL}/api/emotions/predict`, req.body, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+app.get("/status", (req, res) => {
+    res.json({ 
+        status: "🟢 Serveur en ligne",
+        database: connectDB ? "🟢 Connecté à MongoDB" : "🔴 Erreur de connexion MongoDB",
+        timestamp: new Date().toISOString()
     });
-    
-    // Renvoyer la réponse du service d'IA
-    res.json(response.data);
-  } catch (error) {
-    console.error('Erreur lors de l\'analyse des émotions:', error);
-    res.status(500).json({ error: 'Erreur lors de l\'analyse des émotions' });
-  }
 });
 
-//---------------------------------------------------------------------------------------------------- 
+app.use("/api/users", userRoutes);
+app.use("/api/tweets", tweetRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/notifications", notificationRoutes);
 
-// Route pour obtenir des recommandations personnalisées
-app.get('/api/feed/personalized/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    // Obtenir des recommandations basées sur les émotions
-    const response = await axios.get(`${AI_SERVICE_URL}/api/feed/recommend?user_id=${userId}`);
-    
-    // Renvoyer les recommandations
-    res.json(response.data);
-  } catch (error) {
-    console.error('Erreur lors de la personnalisation du feed:', error);
-    res.status(500).json({ error: 'Erreur lors de la personnalisation du feed' });
-  }
-});
-
-//---------------------------------------------------------------------------------------------------- 
-
-
-
-//---------------------------------------------------------------------------------------------------- 
-
-//---------------------------------------------------------------------------------------------------- 
-
-
-//---------------------------------------------------------------------------------------------------- 
-
-
-// // Autres routes existantes...
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
