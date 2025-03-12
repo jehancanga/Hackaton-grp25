@@ -1,75 +1,80 @@
-// src/components/Comment/CommentForm.scss
+/* CommentForm.scss */
 
 .comment-form {
-    padding: 12px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #dce1e6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    border: none;
     border-radius: 8px;
-    background-color: #f7f9fa;
-    margin-top: 10px;
-    
-    .comment-input {
-      width: 100%;
-      border: 1px solid #e1e8ed;
-      border-radius: 8px;
-      padding: 12px;
-      resize: none;
-      font-size: 14px;
-      transition: border-color 0.2s;
-      
-      &:focus {
-        outline: none;
-        border-color: #1da1f2;
-        box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.2);
-      }
-      
-      &::placeholder {
-        color: #9aa0a6;
-      }
-    }
-    
-    .comment-form-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      
-      .character-count {
-        color: #657786;
-        font-size: 12px;
-        
-        &.limit-reached {
-          color: #e0245e;
-        }
-      }
-      
-      .comment-submit-btn {
-        background-color: #1da1f2;
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 8px 16px;
-        font-weight: bold;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        
-        &:hover {
-          background-color: #1a91da;
-        }
-        
-        &:disabled {
-          background-color: #9bd1f9;
-          cursor: not-allowed;
-        }
-      }
-    }
-    
-    .comment-error {
-      color: #e0245e;
-      font-size: 13px;
-      margin-top: 8px;
-      padding: 8px;
-      background-color: rgba(224, 36, 94, 0.1);
-      border-radius: 4px;
+    padding: 12px;
+    font-size: 15px;
+    background: #f8f9fa;
+    border: 1px solid #ccd6dd;
+    transition: all 0.3s ease;
+    outline: none;
+
+    &:focus {
+      border-color: #1da1f2;
+      background: #eef7ff;
+      box-shadow: 0 0 5px rgba(29, 161, 242, 0.3);
     }
   }
-  
+
+  .error-message {
+    color: #e0245e;
+    font-size: 14px;
+    margin-top: 6px;
+    background: rgba(224, 36, 94, 0.1);
+    padding: 6px;
+    border-radius: 6px;
+  }
+
+  .comment-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  button {
+    background: #1da1f2;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background: #0077cc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 119, 204, 0.3);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      background: #b0bec5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+}

@@ -33,16 +33,12 @@ export const registerUser = async (req, res) => {
 // 🔑 Connexion
 export const loginUser = async (req, res) => {
     try {
-        console.log("📩 Données reçues :", req.body);
-
         const { email, password } = req.body;
         const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(400).json({ message: "Email ou mot de passe incorrect" });
         }
-
-        console.log("✅ Utilisateur trouvé :", user);
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
@@ -77,35 +73,55 @@ export const getUserProfile = async (req, res) => {
 // ✏️ Modifier le profil utilisateur (photo de profil, bannière, pseudo, bio, email facultatif)
 export const updateUserProfile = async (req, res) => {
     try {
+        console.log("📩 Données reçues pour mise à jour du profil :", req.body); // 🔍 Log des données reçues
+
         const { username, profilePic, bannerPic, bio, email } = req.body;
         const user = await User.findById(req.user.id);
+
         if (!user) {
-
+            console.error("❌ Utilisateur non trouvé :", req.user.id);
             return res.status(404).json({ message: "Utilisateur non trouvé" });
-
         }
 
         // Mise à jour des champs uniquement si ils sont fournis
-        if (username) user.username = username;
-        if (profilePic) user.profilePic = profilePic;
-        if (bannerPic) user.bannerPic = bannerPic;
-        if (bio) user.bio = bio;
+        if (username) {
+            console.log("👤 Mise à jour du username :", username);
+            user.username = username;
+        }
+        if (profilePic) {
+            console.log("🖼️ Mise à jour de la photo de profil :", profilePic.substring(0, 100) + "..."); // Afficher seulement une partie si c'est Base64
+            user.profilePic = profilePic;
+        }
+        if (bannerPic) {
+            console.log("🎨 Mise à jour de la bannière :", bannerPic);
+            user.bannerPic = bannerPic;
+        }
+        if (bio) {
+            console.log("📝 Mise à jour de la bio :", bio);
+            user.bio = bio;
+        }
         if (email && email !== user.email) {
+            console.log("📧 Vérification de l'email :", email);
             // Vérifier si l'email est déjà utilisé par un autre utilisateur
             const emailExists = await User.findOne({ email });
             if (emailExists) {
+                console.warn("⚠️ Email déjà utilisé :", email);
                 return res.status(400).json({ message: "Cet email est déjà utilisé par un autre compte." });
             }
+            console.log("✅ Mise à jour de l'email :", email);
             user.email = email;
         }
 
         await user.save();
+        console.log("✅ Profil mis à jour avec succès :", user);
+
         res.json({ message: "Profil mis à jour avec succès", user });
     } catch (error) {
-        console.error("Erreur mise à jour profil:", error);
+        console.error("❌ Erreur mise à jour profil :", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
+
 
 
 // ➕ Suivre un utilisateur
@@ -246,11 +262,9 @@ export const blockUser = async (req, res) => {
             return res.status(401).json({ message: "Utilisateur non authentifié" });
         }
 
-        console.log('Début de la fonction blockUser');
-        
+
         // Recherche de l'utilisateur à bloquer
         const userToBlock = await User.findById(req.params.id);
-        console.log('Utilisateur à bloquer :', userToBlock);
 
         if (!userToBlock) {
             console.error('Utilisateur non trouvé');
@@ -287,18 +301,18 @@ export const unblockUser = async (req, res) => {
         if (!req.user) {
             console.error('Utilisateur non authentifié');
             return res.status(401).json({ message: "Utilisateur non authentifié" });
-          }
-        
+        }
+
         const userToUnblock = await User.findById(req.params.id);
-        
+
         if (!userToUnblock) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-       const blockedIndex = req.user.blockedUsers.indexOf(req.params.id);
+        const blockedIndex = req.user.blockedUsers.indexOf(req.params.id);
         if (blockedIndex === -1) {
             return res.status(400).json({ message: "Cet utilisateur n'est pas bloqué" });
         }
 
-         req.user.blockedUsers.splice(blockedIndex, 1);
+        req.user.blockedUsers.splice(blockedIndex, 1);
         await req.user.save();
 
         res.json({ message: `Utilisateur ${userToUnblock.username} débloqué avec succès` });
