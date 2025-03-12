@@ -179,3 +179,39 @@
       padding: 10px 12px;
     }
   }
+
+  // Styles personnalisés pour React-Toastify
+.Toastify__toast-container {
+    font-family: 'Arial', sans-serif; // Utilisez la police de votre application
+  }
+  
+  .Toastify__toast--success {
+    background-color: #4caf50;
+  }
+  
+  .Toastify__toast--error {
+    background-color: #f44336;
+  }
+  
+  .Toastify__toast--info {
+    background-color: #2196f3;
+  }
+  
+  .Toastify__toast--warning {
+    background-color: #ff9900;
+  }
+  
+  .Toastify__progress-bar {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
+  // Styles pour une meilleure adaptation mobile
+  @media only screen and (max-width: 480px) {
+    .Toastify__toast-container {
+      width: 100%;
+      padding: 0;
+      left: 0;
+      margin: 0;
+    }
+  }
+  

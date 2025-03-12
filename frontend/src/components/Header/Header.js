@@ -1,4 +1,3 @@
-// src/components/Header/Header.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrentUser, logoutUser } from "../../services/api";
@@ -41,7 +40,9 @@ const Header = () => {
               alt="Profil"
               className="user-avatar"
             />
-            <span className="username">{user.username}</span>
+            <Link to="/settings" className="username-link">
+              <span className="username">{user.username}</span>
+            </Link>
             <button className="logout-btn" onClick={handleLogout}>
               Déconnexion
             </button>

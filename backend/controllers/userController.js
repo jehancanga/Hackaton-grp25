@@ -73,29 +73,39 @@ export const getUserProfile = async (req, res) => {
     }
 };
 
-// ✏️ Modifier le profil utilisateur (photo de profil, bannière, pseudo, bio)
+// ✏️ Modifier le profil utilisateur (photo de profil, bannière, pseudo, bio, email facultatif)
+
 export const updateUserProfile = async (req, res) => {
     try {
-        const { username, profilePic, bannerPic, bio } = req.body;
+        const { username, profilePic, bannerPic, bio, email } = req.body;
         const user = await User.findById(req.user.id);
-
         if (!user) {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
 
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+        }
+        // Mise à jour des champs uniquement si ils sont fournis
         if (username) user.username = username;
         if (profilePic) user.profilePic = profilePic;
         if (bannerPic) user.bannerPic = bannerPic;
         if (bio) user.bio = bio;
-
+        if (email && email !== user.email) {
+            // Vérifier si l'email est déjà utilisé par un autre utilisateur
+            const emailExists = await User.findOne({ email });
+            if (emailExists) {
+                return res.status(400).json({ message: "Cet email est déjà utilisé par un autre compte." });
+            }
+            user.email = email;
+        }
         await user.save();
-
         res.json({ message: "Profil mis à jour avec succès", user });
     } catch (error) {
+        console.error("Erreur mise à jour profil:", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
+ 
 // ➕ Suivre un utilisateur
 export const followUser = async (req, res) => {
     try {

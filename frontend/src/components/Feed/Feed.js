@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Post from "../Post/Post";
 import "./Feed.scss";
 
@@ -42,7 +43,17 @@ const Feed = () => {
   return (
     <div className="feed">
       {posts.map((post) => (
-        <Post key={post.id} post={post} />
+        <div key={post.id} className="post-item">
+          <Post post={post} />
+          
+          {/* Ajout du lien sur le nom d'utilisateur pour rediriger vers son profil */}
+          <div className="user-info">
+            <Link to={`/profil/${post.id}`} className="user-profile-link">
+              <img src={post.userAvatar} alt={post.username} className="user-avatar" />
+              <span className="username">{post.username}</span>
+            </Link>
+          </div>
+        </div>
       ))}
     </div>
   );
