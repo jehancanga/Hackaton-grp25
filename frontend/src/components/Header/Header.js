@@ -8,7 +8,7 @@ const Header = () => {
   const navigate = useNavigate();
   
   const DEFAULT_PROFILE_PIC =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQX5BBn2NvVcHouuDLpiDfaGhztRETO7O12Cw&s";
+    `${process.env.PUBLIC_URL}/Images/defaultuser.jpg`;
 
   useEffect(() => {
     setUser(getCurrentUser());

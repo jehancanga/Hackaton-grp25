@@ -1,14 +1,15 @@
 import React from "react";
 import "./Post.scss";
 
-const DEFAULT_PROFILE_PIC = `${process.env.PUBLIC_URL}/images/defaultuser.jpg`;
+const DEFAULT_PROFILE_PIC = `${process.env.PUBLIC_URL}/Images/defaultuser.jpg`;
 
 const Post = ({ post }) => {
+  const [user, setUser] = useState(null);
   return (
     <div className="post">
       <div className="post-header">
         <img
-          src={post.userAvatar || DEFAULT_PROFILE_PIC}
+          src={user.profilePic || DEFAULT_PROFILE_PIC}
           alt="Avatar"
           className="avatar"
         />
