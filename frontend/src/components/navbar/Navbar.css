@@ -1,0 +1,45 @@
+/* Styles généraux */
+.navbar {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Logo */
+  .logo-text {
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+  }
+  
+  .logo-text:hover {
+    color: #ffdd57;
+  }
+  
+  /* Effet de survol sur les liens */
+  .navbar-nav .nav-link {
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    color: #ffdd57 !important;
+  }
+  
+  /* Boutons */
+  .btn {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .btn:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Avatar du menu utilisateur */
+  .nav-item.dropdown .nav-link img {
+    border: 2px solid white;
+    transition: transform 0.3s;
+  }
+  
+  .nav-item.dropdown .nav-link:hover img {
+    transform: scale(1.1);
+  }
+  

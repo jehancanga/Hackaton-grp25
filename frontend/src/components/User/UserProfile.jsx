@@ -6,8 +6,8 @@ const UserProfile = () => {
 
   // Données mockées pour le profil utilisateur
   const user = {
-    name: 'John Doe',
-    username: '@johndoe',
+    name: 'Aymane Hajli',
+    username: '@aymanehj',
     bio: 'Développeur passionné par React et Node.js',
     profilePicture: 'https://via.placeholder.com/150',
     banner: 'https://via.placeholder.com/1200x400',
@@ -20,7 +20,7 @@ const UserProfile = () => {
     ],
     media: [
       { id: 1, type: 'image', url: 'https://via.placeholder.com/300' },
-      { id: 2, type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+      
     ],
     likedTweets: [
       { id: 3, content: 'Un tweet que j\'ai aimé.', likes: 15, retweets: 3, comments: 5 },
