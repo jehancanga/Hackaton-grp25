@@ -1,20 +1,20 @@
 // Feed.scss
 
 // Variables
-$primary-color: #5c5fd9; // Couleur principale (basée sur le violet de votre header)
-$secondary-color: #f8f9fa; // Couleur de fond claire
-$border-color: #e1e4e8; // Couleur de bordure légère
-$text-color: #2f3136; // Couleur de texte principale
-$text-secondary: #6c757d; // Couleur de texte secondaire
-$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
+$primary-color: #5c5fd9;
+$secondary-color: #f8f9fa;
+$border-color: #e1e4e8;
+$text-color: #2f3136;
+$text-secondary: #6c757d;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
 .feed {
-  max-width: 650px; // Largeur maximale du feed pour un bon format
+  max-width: 650px;
   width: 100%;
-  margin: 0 auto; // Centrer le feed
-  padding: 20px; // Espace autour du feed
-  
-  // Style pour l'état de chargement
+  margin: 0 auto;
+  padding: 20px;
+  margin-top: 100px; // ✅ Décale le feed sous le header
+
   .loading {
     text-align: center;
     padding: 30px;
@@ -24,8 +24,7 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
     border-radius: 12px;
     margin: 20px 0;
   }
-  
-  // Style pour les messages d'erreur
+
   .error {
     text-align: center;
     padding: 20px;
@@ -34,8 +33,7 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
     border-radius: 8px;
     margin: 20px 0;
   }
-  
-  // Style quand il n'y a pas de posts
+
   .no-posts {
     text-align: center;
     padding: 40px 20px;
@@ -43,11 +41,10 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
     background-color: $secondary-color;
     border-radius: 12px;
     font-size: 16px;
-    margin: it15px 0;
+    margin: 15px 0;
     border: 1px dashed $border-color;
   }
 
-  // Style pour chaque post dans le feed
   .post-item {
     background: white;
     border-radius: 12px;
@@ -56,30 +53,29 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
     box-shadow: $box-shadow;
     border: 1px solid $border-color;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-    
-    // Informations utilisateur
+
     .user-info {
       display: flex;
       align-items: center;
       margin-bottom: 12px;
-      
+
       .user-profile-link {
         display: flex;
         align-items: center;
         text-decoration: none;
         color: $text-color;
         transition: color 0.2s;
-        
+
         &:hover {
           color: $primary-color;
         }
       }
-      
+
       .user-avatar {
         width: 40px;
         height: 40px;
@@ -88,21 +84,20 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
         border: 2px solid $primary-color;
         margin-right: 10px;
       }
-      
+
       .username {
         font-weight: 600;
         font-size: 15px;
       }
     }
-    
-    // Style des boutons d'action (like, retweet, comment)
+
     .action-buttons {
       display: flex;
       justify-content: space-around;
       padding-top: 12px;
       margin-top: 12px;
       border-top: 1px solid $border-color;
-      
+
       button {
         background: none;
         border: none;
@@ -115,52 +110,50 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
         align-items: center;
         cursor: pointer;
         transition: background-color 0.2s, color 0.2s;
-        
+
         &:hover {
           background-color: rgba($primary-color, 0.1);
           color: $primary-color;
         }
-        
+
         svg {
           margin-right: 4px;
         }
-        
+
         &.like-button.active {
           color: #e0245e;
         }
-        
+
         &.retweet-button.active {
           color: #17bf63;
         }
       }
     }
-    
-    // Style pour le contenu du post
+
     .post-content {
       padding: 10px 0;
       line-height: 1.5;
       font-size: 15px;
       color: $text-color;
-      
+
       p {
         margin-bottom: 10px;
       }
-      
+
       img {
         max-width: 100%;
         border-radius: 8px;
         margin: 10px 0;
       }
     }
-    
-    // Timestamp et métadonnées
+
     .post-meta {
       color: $text-secondary;
       font-size: 13px;
       margin-top: 6px;
       display: flex;
       align-items: center;
-      
+
       .dot-separator {
         margin: 0 6px;
         font-size: 8px;
@@ -174,7 +167,8 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
 @media (max-width: 768px) {
   .feed {
     padding: 10px;
-    
+    margin-top: 80px; // ✅ Ajuste pour mobiles
+
     .post-item {
       padding: 12px;
       border-radius: 8px;
@@ -185,13 +179,14 @@ $box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre douce
 @media (max-width: 480px) {
   .feed {
     padding: 8px;
-    
+    margin-top: 70px; // ✅ Ajuste pour petits écrans
+
     .post-item {
       .action-buttons button {
         padding: 6px;
-        
+
         span {
-          display: none; // Cacher le texte sur mobile, garder seulement les icônes
+          display: none;
         }
       }
     }

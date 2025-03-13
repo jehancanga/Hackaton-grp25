@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTweet } from "../../services/apiPosts";
-import { FiImage, FiXCircle } from "react-icons/fi";
+import { FiImage, FiXCircle, FiHash } from "react-icons/fi";
 import "./NewPost.scss";
 
 const NewPost = ({ onPostCreated }) => {
-  const [formData, setFormData] = useState({ content: "", media: "" });
+  const [formData, setFormData] = useState({ content: "", media: "", hashtags: "" });
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -14,8 +14,22 @@ const NewPost = ({ onPostCreated }) => {
   const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+  
+    if (name === "hashtags") {
+      // Séparer en cas de virgule et ajouter "#" devant si absent
+      value = value
+        .split(",")
+        .map(tag => tag.trim())  // Supprime les espaces inutiles
+        .map(tag => (tag.startsWith("#") ? tag : `#${tag}`)) // Ajoute `#` si absent
+        .join(", "); // Reformate en string pour l'affichage dans le champ
+  
+      console.log(`📌 Mise à jour du champ ${name} :`, value);
+    }
+  
+    setFormData({ ...formData, [name]: value });
   };
+  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -43,25 +57,39 @@ const NewPost = ({ onPostCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!formData.content.trim()) {
       setError("Le texte du post est requis.");
       return;
     }
-
+  
     if (!user) {
       setError("Vous devez être connecté pour poster.");
       return;
     }
-
+  
+    // ✅ Corrige la séparation des hashtags en tableau
+    const hashtagsArray = formData.hashtags
+      .split(",")
+      .map(tag => tag.trim())
+      .filter(tag => tag.startsWith("#") && tag.length > 1);
+  
+    console.log("📤 Hashtags traités :", hashtagsArray);
+  
     const tweetData = {
       userId: user._id,
       content: formData.content,
       media: formData.media || "",
+      hashtags: hashtagsArray
     };
-
+  
+    console.log("📤 Données envoyées :", tweetData);
+  
     try {
       const response = await createTweet(tweetData, token);
+  
+      console.log("✅ Réponse reçue du backend :", response);
+  
       if (response) {
         if (onPostCreated) onPostCreated();
         navigate("/");
@@ -73,6 +101,7 @@ const NewPost = ({ onPostCreated }) => {
       setError("Impossible de publier le post.");
     }
   };
+  
 
   return (
     <div className="newpost-container">
@@ -85,7 +114,19 @@ const NewPost = ({ onPostCreated }) => {
           onChange={handleChange}
           required
         />
-        
+
+        {/* Champ pour ajouter des hashtags */}
+        <div className="hashtag-input">
+          <FiHash className="icon" />
+          <input
+            type="text"
+            name="hashtags"
+            placeholder="Ajouter des hashtags (séparés par des virgules)"
+            value={formData.hashtags} // ✅ Corrige ici pour bien lier le state
+            onChange={handleChange}
+          />
+        </div>
+
         {/* Bouton stylisé pour ajouter une image */}
         <label className="image-upload-btn">
           <FiImage className="icon" />

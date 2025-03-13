@@ -13,7 +13,7 @@ export const sendMessage = async (req, res) => {
             senderId: req.user.id,
             receiverId,
             content
-        });
+        }); 
 
         res.status(201).json(message);
     } catch (error) {
