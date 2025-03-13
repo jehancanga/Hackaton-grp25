@@ -9,6 +9,15 @@ import commentRoutes from "./routes/commentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Créer un dossier 'uploads' pour stocker les images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 dotenv.config();
 connectDB();
 
