@@ -9,6 +9,8 @@ const tweetSchema = new mongoose.Schema(
     retweets: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     hashtags: [{ type: String }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+    category: { type: String, default: "Uncategorized" }, // Ajout du champ catégorie
+    detectedEmotion: { type: String, default: "neutral" } // Ajout du champ émotion
   },
   { timestamps: true }
 );
