@@ -1,21 +1,31 @@
-# Utiliser une image légère de Python
 FROM python:3.9-slim
 
-# Définir le répertoire de travail
+# Installer les dépendances système nécessaires pour PyTorch
+RUN apt-get update && apt-get install -y \
+    libopenblas-dev \
+    libopenmpi-dev \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copier et installer les dépendances
+# Copier les fichiers nécessaires
 COPY requirements.txt .
+COPY app.py .
+COPY models.py .
+COPY app ./app
+
+# Installer les autres dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste du code, y compris les modèles
-COPY . .
+# Vérifier la présence du fichier modèle
+RUN if [ ! -f "app/models/emotion_model_scripted.pt" ]; then \
+    echo "Erreur : Fichier modèle emotion_model_scripted.pt introuvable"; \
+    exit 1; \
+    fi
 
-# Vérifier que le modèle est bien présent
-RUN test -f app/models/emotion_model.pt || echo "⚠️ Modèle non trouvé"
+# Exposer le port
+EXPOSE 5001
 
-# Exposer le port Flask
-EXPOSE 5000
-
-# Lancer l'application Flask
+# Commande par défaut
 CMD ["python", "app.py"]

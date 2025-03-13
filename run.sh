@@ -73,7 +73,7 @@ start_containers() {
   echo "✅ Applications démarrées!"
   echo "🌐 Frontend: http://localhost"
   echo "🔌 Backend: http://localhost:3000"
-  echo "🤖 Service IA: http://localhost:5000"
+  echo "🤖 Service IA: http://localhost:5001"
 }
 
 # Arrêter les conteneurs

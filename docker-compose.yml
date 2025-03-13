@@ -1,32 +1,5 @@
-version: "3.8"
- 
 services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    networks:
-      - app-network
- 
-  backend:
-    build: ./backend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mongodb
-    environment:
-      - NODE_ENV=development
-      - MONGO_URI=mongodb://mongodb:27017/biblio
-    networks:
-      - app-network  
- 
+
   mongodb:
     image: mongo
     container_name: mongodb
@@ -37,10 +10,53 @@ services:
       - mongo-data:/data/db
     networks:
       - app-network
- 
+
+  bot:
+    container_name: bot
+    build: ./bot
+    volumes:
+      - ./bot:/app
+    ports:
+      - "5001:5001"
+    command: python app.py
+
+  backend:
+    container_name: node
+    build: ./backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/biblio
+      - SEED_DB=true
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - app-network
+
+  frontend:
+    container_name: react
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=0
+      - REACT_APP_API_URL=http://localhost:3000/api
+    networks:
+      - app-network
+
 volumes:
   mongo-data:
- 
+
 networks:
   app-network:
     driver: bridge

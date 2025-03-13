@@ -133,10 +133,10 @@ Après le démarrage, vous pouvez accéder aux différents services :
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| GET | /api/tweets | Liste tous les tweets | ❌ |
-| POST | /api/tweets | Publier un tweet | ❌ |
-| PUT | /api/tweets/:id | Modifier un tweet | ❌ |
-| DELETE | /api/tweets/:id | Supprimer un tweet | ❌ |
+| GET | /api/tweets | Liste tous les tweets | V |
+| POST | /api/tweets | Publier un tweet | V |
+| PUT | /api/tweets/:id | Modifier un tweet | V |
+| DELETE | /api/tweets/:id | Supprimer un tweet | V |
 
 ### 🔐 Utilisateurs
 
