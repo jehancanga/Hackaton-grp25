@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getCurrentUser, updateUserProfile } from "../../services/apiUsers";
 import "./settings.scss";
+import FollowersModal from '..//Followermodal/FollowersModal';
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("authToken");
@@ -23,6 +24,10 @@ const ProfileSettings = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentUsername, setCurrentUsername] = useState("");
+  const [followModalVisible, setFollowModalVisible] = useState(false);
+  const [followModalType, setFollowModalType] = useState('followers');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -30,6 +35,9 @@ const ProfileSettings = () => {
       try {
         const user = getCurrentUser();
         if (user) {
+          setCurrentUser(user);
+          setUserId(user._id || user.id || "");
+          
           const usernameValue = user.username || "";
           setUsername(usernameValue);
           setCurrentUsername(usernameValue);
@@ -140,9 +148,6 @@ const ProfileSettings = () => {
       // Mettre à jour le nom d'utilisateur affiché
       setCurrentUsername(username);
   
-      // Rechargement de la page après une sauvegarde réussie
-      window.location.reload();
-
       toast.update(loadingToastId, {
         render: "Profil mis à jour avec succès ! ✅",
         type: "success",
@@ -150,6 +155,8 @@ const ProfileSettings = () => {
         autoClose: 3000,
       });
   
+      // Rechargement de la page après une sauvegarde réussie
+      window.location.reload();
 
     } catch (error) {
       console.error("❌ Erreur lors de la mise à jour du profil :", error);
@@ -177,6 +184,16 @@ const ProfileSettings = () => {
     setConfirmPassword("");
   };
 
+  const handleOpenFollowersModal = () => {
+    setFollowModalType('followers');
+    setFollowModalVisible(true);
+  };
+  
+  const handleOpenFollowingModal = () => {
+    setFollowModalType('following');
+    setFollowModalVisible(true);
+  };
+  
   return (
     <div className="settings-container">
       <div className="profile-header">
@@ -194,7 +211,6 @@ const ProfileSettings = () => {
                     borderRadius: '50%'
                   }}
                 />
-                {/* Le bouton d'édition est maintenant placé avec un z-index plus élevé */}
               </div>
               <label htmlFor="profile-pic" className="edit-icon">
                 <svg viewBox="0 0 24 24" className="pencil-icon">
@@ -208,23 +224,23 @@ const ProfileSettings = () => {
             </div>
           </div>
         </div>
-
+  
         <div className="profile-stats">
           <div className="stat-item">
             <span className="stat-value">{tweets}</span>
             <span className="stat-label">Tweets</span>
           </div>
-          <div className="stat-item">
+          <div className="stat-item" onClick={handleOpenFollowersModal} style={{cursor: 'pointer'}}>
             <span className="stat-value">{followers}</span>
             <span className="stat-label">Followers</span>
           </div>
-          <div className="stat-item">
+          <div className="stat-item" onClick={handleOpenFollowingModal} style={{cursor: 'pointer'}}>
             <span className="stat-value">{following}</span>
             <span className="stat-label">Following</span>
           </div>
         </div>
       </div>
-
+  
       <div className="tabs">
         <button className={`tab-button ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}>
           Profil
@@ -233,7 +249,7 @@ const ProfileSettings = () => {
           Sécurité
         </button>
       </div>
-
+  
       {activeTab === 0 && (
         <form className="settings-form" onSubmit={handleProfileUpdate}>
           <div className="form-group">
@@ -259,7 +275,7 @@ const ProfileSettings = () => {
           </button>
         </form>
       )}
-
+  
       {activeTab === 1 && (
         <form className="settings-form" onSubmit={handlePasswordUpdate}>
           <div className="form-group">
@@ -276,6 +292,14 @@ const ProfileSettings = () => {
           </button>
         </form>
       )}
+  
+      {/* Le modal de followers/following */}
+      <FollowersModal 
+        userId={userId}
+        isOpen={followModalVisible}
+        onClose={() => setFollowModalVisible(false)}
+        initialTab={followModalType}
+      />
     </div>
   );
 };

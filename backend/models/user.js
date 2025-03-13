@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, default: false },
     bannerPic: { type: String, default: "https://via.placeholder.com/800x200" },
     blockedUsers: {type: [mongoose.Schema.Types.ObjectId],ref: "User",default: [],},
+    tweetCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

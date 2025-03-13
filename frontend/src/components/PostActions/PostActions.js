@@ -84,39 +84,46 @@ const PostActions = ({ post, onCommentClick, onPostUpdate }) => {
     }
   };
   
-  // Gestion du clic sur le bouton retweet
   const handleRetweetClick = async () => {
     if (isRetweeting || !post) return;
     
     setIsRetweeting(true);
     
     try {
-      // Importer la fonction de manière dynamique pour éviter les erreurs de compilation
-      const { retweetPost } = await import('../../services/apiPosts');
+      let response;
       
-      const response = await retweetPost(post._id);
+      // Appeler la fonction appropriée selon l'état actuel
+      if (userRetweeted) {
+        response = await unretweet(post._id);
+      } else {
+        response = await retweet(post._id);
+      }
       
-      // Mettre à jour l'UI
-      setUserRetweeted(!userRetweeted);
-      setRetweetCount(prevCount => userRetweeted ? prevCount - 1 : prevCount + 1);
-      
-      if (onPostUpdate && response) {
-        // Si nous avons une réponse avec l'originalTweet, mettre à jour
-        if (response.originalTweet) {
-          onPostUpdate(response.originalTweet);
-        } else {
-          onPostUpdate(response);
+      // Mise à jour de l'UI basée sur la réponse
+      if (response) {
+        setUserRetweeted(!userRetweeted);
+        
+        // Mise à jour du compteur de retweets selon la réponse
+        if (response.message === "Retweet supprimé") {
+          setRetweetCount(prevCount => prevCount - 1);
+        } else if (response.message === "Retweet créé") {
+          setRetweetCount(prevCount => prevCount + 1);
         }
         
-        // Si un nouveau retweet a été créé, vous pouvez ajouter une logique
-        // pour l'ajouter à la timeline
+        // Si nous avons une réponse avec l'originalTweet, mettre à jour
+        if (response.originalTweet && onPostUpdate) {
+          onPostUpdate(response.originalTweet);
+        }
       }
     } catch (error) {
-      console.error("Erreur lors du retweet:", error);
+      console.error("Erreur lors de la gestion du retweet:", error);
     } finally {
       setIsRetweeting(false);
     }
   };
+  
+  
+  
 
   // Gestion du clic sur le bouton commentaire
   const handleCommentClick = () => {

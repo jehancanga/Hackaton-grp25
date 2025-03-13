@@ -10,6 +10,7 @@ import NewPost from "./components/NewPost/NewPost";
 import MyPosts from "./components/MyPosts/MyPosts";
 import Settings from "./components/settings/settings";
 import ProfilUser from "./components/profilUser/profilUser";
+import 'antd/dist/reset.css';
 
 function App() {
   return (

@@ -287,23 +287,46 @@ export const getAllUsers = async (req, res) => {
 
 // 👥 Récupérer les abonnés d'un utilisateur
 export const getUserFollowers = async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id).populate("followers", "username profilePic");
-        res.json(user.followers);
-    } catch (error) {
-        res.status(500).json({ message: "Erreur serveur" });
-    }
+  try {
+      // Vérifier que l'utilisateur est authentifié (ce que le middleware protect devrait faire)
+      if (!req.user) {
+          return res.status(401).json({ message: "Utilisateur non authentifié" });
+      }
+      
+      const user = await User.findById(req.params.id).populate("followers", "username profilePic");
+      
+      if (!user) {
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+      
+      res.json(user.followers);
+  } catch (error) {
+      console.error("Erreur getUserFollowers:", error);
+      res.status(500).json({ message: "Erreur serveur" });
+  }
 };
 
 // 👥 Récupérer la liste des abonnements d'un utilisateur
 export const getUserFollowing = async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id).populate("following", "username profilePic");
-        res.json(user.following);
-    } catch (error) {
-        res.status(500).json({ message: "Erreur serveur" });
-    }
+  try {
+      // Vérifier que l'utilisateur est authentifié
+      if (!req.user) {
+          return res.status(401).json({ message: "Utilisateur non authentifié" });
+      }
+      
+      const user = await User.findById(req.params.id).populate("following", "username profilePic");
+      
+      if (!user) {
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+      
+      res.json(user.following);
+  } catch (error) {
+      console.error("Erreur getUserFollowing:", error);
+      res.status(500).json({ message: "Erreur serveur" });
+  }
 };
+
 
 // 📛 Bloquer un utilisateur
 export const blockUser = async (req, res) => {
