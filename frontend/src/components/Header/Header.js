@@ -187,7 +187,7 @@ const Header = () => {
     <nav className="header">
       <div className="header-top">
         {/* Logo */}
-        <div className="logo">J-IPSSI.</div>
+        <div className="logo">EmoTweet</div>
 
         {/* Barre de recherche améliorée */}
         <div className="search-bar">
