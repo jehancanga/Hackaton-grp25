@@ -28,6 +28,14 @@ const ProfileSettings = () => {
   const [emotion, setEmotion] = useState("Neutre");
   const [cameraActive, setCameraActive] = useState(false);
 
+  // Added missing state variables
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
+  const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150");
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
+  const [tweets, setTweets] = useState(0);
+
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const [currentUsername, setCurrentUsername] = useState("");
@@ -111,6 +119,20 @@ const ProfileSettings = () => {
     fetchUserData();
   }, []);
 
+  // Added missing function
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+      
+      // Preview image
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfileImage(event.target.result);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
   // 📸 Gérer l'activation/désactivation de la caméra
   const toggleCamera = async () => {
     if (!cameraActive) {
@@ -153,8 +175,6 @@ const ProfileSettings = () => {
     }
   };
 
-
-
   // 🎭 Détection d'émotion via la caméra (Envoi image au backend Flask)
   const sendImageToEmotionAI = async () => {
     if (!videoRef.current) return;
@@ -188,18 +208,10 @@ const ProfileSettings = () => {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    
+    // Show loading toast
+    const loadingToastId = toast.loading("Mise à jour du profil en cours...");
 
-    const data = {
-      username: userData.username.trim(),
-      bio: userData.bio.trim(),
-      profilePic: userData.profilePic,
-    };
-
-    try {
-      await updateUserProfile(data);
-      toast.success("Profil mis à jour avec succès !");
-      window.location.reload();
-  
     try {
       // Construire l'objet JSON avec l'image en Base64
       const data = {
@@ -220,7 +232,7 @@ const ProfileSettings = () => {
           ...currentUser,
           username,
           bio,
-          profilePic: result.user.profilePic || profileImage,
+          profilePic: result.user?.profilePic || profileImage,
         };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       }
@@ -239,13 +251,18 @@ const ProfileSettings = () => {
       window.location.reload();
 
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour du profil.");
+      console.error("Erreur lors de la mise à jour:", error);
+      toast.update(loadingToastId, {
+        render: "Erreur lors de la mise à jour du profil.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  
   const handlePasswordUpdate = (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
@@ -300,9 +317,6 @@ const ProfileSettings = () => {
     <div className="settings-container">
       <div className="profile-header">
         <div className="profile-main">
-          <div className="profile-image-container">
-            <img src={userData.profilePic} alt="Profile" className="profile-image" />
-            <input type="file" id="profile-pic" className="hidden-input" onChange={e => setImageFile(e.target.files[0])} accept="image/*" />
           <div className="user-profile-info">
             <div className="profile-image-container">
               <div className="profile-image">
@@ -328,14 +342,10 @@ const ProfileSettings = () => {
               <h2>{currentUsername || "Utilisateur"}</h2>
             </div>
           </div>
-          <h2>{userData.username || "Utilisateur"}</h2>
           <p>{userData.bio}</p>
         </div>
   
         <div className="profile-stats">
-          <span>{userData.tweets} Tweets</span>
-          <span>{userData.followers} Followers</span>
-          <span>{userData.following} Following</span>
           <div className="stat-item">
             <span className="stat-value">{tweets}</span>
             <span className="stat-label">Tweets</span>
@@ -359,17 +369,44 @@ const ProfileSettings = () => {
   
       {activeTab === 0 && (
         <form className="settings-form" onSubmit={handleProfileUpdate}>
-          <input type="text" value={userData.username} onChange={e => setUserData({ ...userData, username: e.target.value })} placeholder="Nom d'utilisateur" />
-          <textarea value={userData.bio} onChange={e => setUserData({ ...userData, bio: e.target.value })} placeholder="Ma bio" rows={4} />
-          <button type="submit" disabled={isLoading}>{isLoading ? "Sauvegarde en cours..." : "Sauvegarder"}</button>
+          <input 
+            type="text" 
+            value={username} 
+            onChange={e => setUsername(e.target.value)} 
+            placeholder="Nom d'utilisateur" 
+          />
+          <textarea 
+            value={bio} 
+            onChange={e => setBio(e.target.value)} 
+            placeholder="Ma bio" 
+            rows={4} 
+          />
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Sauvegarde en cours..." : "Sauvegarder"}
+          </button>
         </form>
       )}
   
       {activeTab === 1 && (
-        <form className="settings-form">
-          <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Mot de passe actuel" />
-          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Nouveau mot de passe" />
-          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirmer le mot de passe" />
+        <form className="settings-form" onSubmit={handlePasswordUpdate}>
+          <input 
+            type="password" 
+            value={currentPassword} 
+            onChange={e => setCurrentPassword(e.target.value)} 
+            placeholder="Mot de passe actuel" 
+          />
+          <input 
+            type="password" 
+            value={newPassword} 
+            onChange={e => setNewPassword(e.target.value)} 
+            placeholder="Nouveau mot de passe" 
+          />
+          <input 
+            type="password" 
+            value={confirmPassword} 
+            onChange={e => setConfirmPassword(e.target.value)} 
+            placeholder="Confirmer le mot de passe" 
+          />
           <button type="submit">Mettre à jour</button>
         </form>
       )}
