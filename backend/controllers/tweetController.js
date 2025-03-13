@@ -12,35 +12,34 @@ export const createTweet = async (req, res) => {
     }
 
     let hashtagIds = [];
+    let category = "Autre"; // ✅ Catégorie par défaut
 
     if (hashtags && Array.isArray(hashtags)) {
       for (const tag of hashtags) {
         let hashtag = await Hashtag.findOne({ hashtag: tag });
 
         if (!hashtag) {
-          hashtag = await Hashtag.create({ hashtag: tag, category: "Général" });
+          hashtag = await Hashtag.create({ hashtag: tag, category: "Autre" });
         }
 
-        if (!hashtagIds.includes(hashtag._id)) {
-          hashtagIds.push(hashtag._id);
+        hashtagIds.push(hashtag._id);
+
+        // ✅ On récupère la première catégorie trouvée (priorité au premier hashtag)
+        if (category === "Autre" && hashtag.category) {
+          category = hashtag.category;
         }
       }
     }
 
-    // Créer le tweet
     const tweet = await Tweet.create({
       userId: req.user.id,
       content,
       media,
       hashtags: hashtagIds,
+      category, // ✅ Ajout de la catégorie
     });
 
-    // 🔥 Peupler les hashtags pour obtenir leur nom et catégorie
-    const populatedTweet = await Tweet.findById(tweet._id)
-      .populate("userId", "username profilePic")
-      .populate("hashtags", "hashtag category");
-
-    res.status(201).json({ message: "Tweet créé avec succès", tweet: populatedTweet });
+    res.status(201).json({ message: "Tweet créé avec succès", tweet });
   } catch (error) {
     console.error("❌ Erreur lors de la création du tweet :", error);
     res.status(500).json({ message: "Erreur serveur" });
@@ -231,4 +230,21 @@ export const unretweetPost = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+// 📌 Obtenir la catégorie d'un tweet
+export const getTweetCategory = async (req, res) => {
+  try {
+    const tweet = await Tweet.findById(req.params.id).populate("hashtags");
+
+    if (!tweet) {
+      return res.status(404).json({ message: "Tweet non trouvé" });
+    }
+
+    res.json({ category: tweet.category });
+  } catch (error) {
+    console.error("Erreur lors de la récupération de la catégorie :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
 
