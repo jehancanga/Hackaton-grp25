@@ -215,3 +215,84 @@
     }
   }
   
+
+.profile-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 10px 0;
+    text-align: center;
+    
+    .stat-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .stat-value {
+        font-weight: bold;
+        font-size: 18px;
+        color: #1da1f2;
+      }
+      
+      .stat-label {
+        font-size: 14px;
+        color: #657786;
+        margin-top: 2px;
+      }
+    }
+  }
+  
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #e6ecf0;
+    
+    .profile-main {
+      text-align: center;
+      width: 100%;
+      
+      .profile-image-container {
+        position: relative;
+        display: inline-block;
+        
+        .profile-image {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          overflow: hidden;
+          position: relative;
+          margin: 0 auto;
+          border: 3px solid #fff;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .edit-icon {
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+          background-color: #1da1f2;
+          border-radius: 50%;
+          padding: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          
+          .pencil-icon {
+            width: 16px;
+            height: 16px;
+            fill: #fff;
+          }
+        }
+        
+        .hidden-input {
+          display: none;
+        }
+      }
+    }
+  }
+  

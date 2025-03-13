@@ -58,7 +58,7 @@ const Header = () => {
     <nav className="header">
       <div className="header-top">
         {/* Logo */}
-        <div className="logo">.IPSSI</div>
+        <div className="logo">J-IPSSI.</div>
 
         {/* Barre de recherche */}
         <div className="search-bar">

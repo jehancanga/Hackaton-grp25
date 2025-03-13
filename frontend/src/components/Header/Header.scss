@@ -1,104 +1,133 @@
-/* Style du Header */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+$primary-color: #4A90E2;
+$secondary-color: #ececec;
+$accent-color: #ff4757;
+$text-color: #333;
+
 .header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #4a59b0;
-    padding: 15px 20px;
-    color: white;
-  }
-  
-  /* Partie supérieure avec le logo, la recherche et le profil */
+  font-family: 'Poppins', sans-serif;
+  background: $secondary-color;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+
   .header-top {
-    width: 100%;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
   }
-  
-  /* Logo */
+
   .logo {
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: $primary-color;
   }
-  
-  /* Barre de recherche agrandie */
+
   .search-bar {
-    flex-grow: 1;
-    max-width: 500px;
     display: flex;
     align-items: center;
-    background: white;
-    padding: 8px;
-    border-radius: 8px;
+    background: rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 5px 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+    input {
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      padding: 5px;
+      flex: 1;
+      background: transparent;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: $accent-color;
+    }
   }
-  
-  .search-bar input {
-    flex-grow: 1;
-    border: none;
-    outline: none;
-    font-size: 16px;
-  }
-  
-  .clear-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    margin-left: 10px;
-    color: #333;
-  }
-  
-  /* Navigation centrée sous la barre de recherche */
-  .nav-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-    margin-top: 15px;
-  }
-  
-  .nav-item {
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .nav-item:hover {
-    text-decoration: underline;
-  }
-  
-  /* Profil utilisateur en haut à droite */
+
   .user-info {
     display: flex;
     align-items: center;
     gap: 10px;
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid $primary-color;
+    }
+
+    .username-link {
+      text-decoration: none;
+      color: $text-color;
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      background: $accent-color;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.3s;
+
+      &:hover {
+        background: darken($accent-color, 10%);
+      }
+    }
   }
-  
-  .user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
+
+  .nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+    .nav-item {
+      text-decoration: none;
+      color: $text-color;
+      font-weight: 600;
+      padding: 8px 12px;
+      transition: 0.3s;
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+
+    .login-btn, .register-btn {
+      background: $primary-color;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      transition: 0.3s;
+
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
+    }
   }
-  
-  .username {
-    font-size: 16px;
-    font-weight: bold;
+
+  @media (max-width: 768px) {
+    .header-top {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-links {
+      flex-direction: column;
+      align-items: center;
+    }
   }
-  
-  .logout-btn {
-    background-color: #ff4b5c;
-    border: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .logout-btn:hover {
-    background-color: #e03e4d;
-  }
-  
+}

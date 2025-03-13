@@ -1,189 +1,271 @@
-// UserProfile.scss
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
-  
-  body {
-    background-color: #f8f9fa;
-  }
-  
-  .loading, .error {
-    max-width: 600px;
-    margin: 40px auto;
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
     padding: 20px;
-    text-align: center;
     background-color: white;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
-  .error {
-    color: #e0245e;
-  }
-  
-  .profile-container {
-    max-width: 600px;
-    margin: 20px auto;
-    background-color: white;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+  .loading-container, .error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
     
-    .profile-header {
+    .loading, .error {
+      text-align: center;
       padding: 20px;
-      border-bottom: 1px solid #e6ecf0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    }
+    
+    .error {
+      color: #e0245e;
       
-      .profile-avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background-color: #f1f1f1;
-        margin-bottom: 15px;
+      h3 {
+        margin-bottom: 10px;
       }
       
-      .profile-name {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 5px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 90%;
-        text-align: center;
-      }
-      
-      .profile-username {
+      .error-details {
+        margin-top: 10px;
+        font-size: 0.9rem;
         color: #657786;
-        font-size: 15px;
-        margin-bottom: 15px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 90%;
+        max-width: 500px;
+        overflow-wrap: break-word;
       }
       
-      .profile-stats {
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-        margin-bottom: 20px;
-        
-        .stat-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          
-          .stat-value {
-            font-size: 22px;
-            font-weight: bold;
-            color: #1da1f2;
-          }
-          
-          .stat-label {
-            color: #657786;
-            font-size: 14px;
-          }
-        }
-      }
-      
-      .follow-button {
+      .retry-button {
+        margin-top: 15px;
+        padding: 8px 16px;
         background-color: #1da1f2;
         color: white;
         border: none;
-        border-radius: 30px;
-        padding: 10px 0;
-        font-weight: bold;
-        font-size: 16px;
+        border-radius: 20px;
         cursor: pointer;
-        width: 90%;
-        transition: all 0.2s ease;
         
         &:hover {
-          background-color: #1a91da;
-        }
-        
-        &.unfollow {
-          background-color: #fff;
-          color: #1da1f2;
-          border: 1px solid #1da1f2;
-          
-          &:hover {
-            background-color: #f8f8f8;
-          }
+          background-color: darken(#1da1f2, 10%);
         }
       }
     }
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e6ecf0;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+  }
+  
+  .profile-info {
+    flex: 1;
+  }
+  
+  .profile-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #14171a;
+  }
+  
+  .profile-username {
+    font-size: 16px;
+    color: #657786;
+    margin: 5px 0 10px;
+  }
+  
+  .profile-stats {
+    display: flex;
+    margin-top: 10px;
     
-    .tweet-section {
-      padding: 20px;
+    .stat {
+      margin-right: 20px;
       
-      .section-title {
-        font-size: 18px;
+      .stat-value {
         font-weight: bold;
-        margin-bottom: 15px;
         color: #14171a;
       }
       
-      .tweets-container {
-        .tweet {
-          padding: 15px;
-          border-bottom: 1px solid #e6ecf0;
-          
-          &:last-child {
-            border-bottom: none;
-          }
-          
-          .tweet-content {
-            font-size: 15px;
-            line-height: 1.4;
-            margin-bottom: 10px;
-          }
-          
-          .tweet-time {
-            color: #657786;
-            font-size: 13px;
-            margin-bottom: 8px;
-          }
-          
-          .tweet-stats {
-            font-size: 13px;
-            color: #657786;
-            
-            span {
-              margin-right: 5px;
-              margin-left: 5px;
-              
-              &:first-child {
-                margin-left: 0;
-              }
-            }
-          }
-        }
-        
-        .no-tweets {
-          color: #657786;
-          font-style: italic;
-          text-align: center;
-          padding: 20px;
-        }
+      .stat-label {
+        margin-left: 5px;
+        color: #657786;
+        font-size: 14px;
       }
     }
   }
   
-  // Animation pour les états de chargement
-  @keyframes pulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
+  .follow-button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #1da1f2;
+    
+    &:not(.following) {
+      background-color: #1da1f2;
+      color: white;
+      
+      &:hover {
+        background-color: darken(#1da1f2, 10%);
+      }
+    }
+    
+    &.following {
+      background-color: white;
+      color: #1da1f2;
+      
+      &:hover {
+        background-color: rgba(29, 161, 242, 0.1);
+        border-color: #1da1f2;
+      }
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
   
-  .loading {
-    animation: pulse 1.5s infinite;
+  .profile-tweets {
+    margin-top: 30px;
+    
+    h3 {
+      font-size: 20px;
+      color: #14171a;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e6ecf0;
+    }
   }
+  
+  .no-tweets {
+    text-align: center;
+    color: #657786;
+    padding: 30px 0;
+  }
+  
+  .tweets-list {
+    margin-top: 10px;
+  }
+  
+  .tweet-card {
+    border: 1px solid #e6ecf0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: #f8f8f8;
+    }
+  }
+  
+  .tweet-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .tweet-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .tweet-user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .tweet-user-name {
+    font-weight: bold;
+    color: #14171a;
+  }
+  
+  .tweet-user-username {
+    font-size: 14px;
+    color: #657786;
+  }
+  
+  .tweet-content {
+    margin: 10px 0;
+    line-height: 1.4;
+    font-size: 16px;
+    color: #14171a;
+  }
+  
+  .tweet-date {
+    font-size: 14px;
+    color: #657786;
+    margin-bottom: 10px;
+  }
+  
+  .tweet-actions {
+    display: flex;
+    margin-top: 10px;
+    
+    div {
+      margin-right: 20px;
+      color: #657786;
+      cursor: pointer;
+      
+      &:hover {
+        color: #1da1f2;
+      }
+      
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .follow-button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+    text-align: center;
+    
+    // Style pour l'état "Suivre"
+    &:not(.following) {
+      background-color: #1da1f2;
+      color: white;
+      border: 1px solid #1da1f2;
+      
+      &:hover {
+        background-color: darken(#1da1f2, 10%);
+      }
+    }
+    
+    // Style pour l'état "Ne plus suivre" / "Suivi ✓"
+    &.following {
+      background-color: white;
+      color: #1da1f2;
+      border: 1px solid #1da1f2;
+      
+      &:hover {
+        background-color: rgba(224, 36, 94, 0.1);
+        color: #e0245e;
+        border-color: #e0245e;
+      }
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  

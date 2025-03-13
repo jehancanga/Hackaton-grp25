@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api/comments';
+const BASE_API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+const COMMENTS_API_URL = `${BASE_API_URL}/comments`;
 
 // Fonction utilitaire pour les en-têtes d'authentification
 const getAuthHeaders = () => {
@@ -15,7 +16,7 @@ const getAuthHeaders = () => {
 // Obtenir les commentaires d'un tweet
 export const getComments = async (tweetId) => {
   try {
-    const response = await axios.get(`${API_URL}/${tweetId}`, getAuthHeaders());
+    const response = await axios.get(`${COMMENTS_API_URL}/${tweetId}`, getAuthHeaders());
     return response.data;
   } catch (error) {
     console.error("Erreur récupération commentaires:", error.response?.data || error.message);
@@ -27,7 +28,7 @@ export const getComments = async (tweetId) => {
 export const addComment = async (tweetId, content) => {
   try {
     const response = await axios.post(
-      `${API_URL}/${tweetId}`, 
+      `${COMMENTS_API_URL}/${tweetId}`, 
       { content }, 
       getAuthHeaders()
     );
@@ -42,7 +43,7 @@ export const addComment = async (tweetId, content) => {
 export const likeComment = async (commentId) => {
   try {
     const response = await axios.post(
-      `${API_URL}/${commentId}/like`, 
+      `${COMMENTS_API_URL}/${commentId}/like`, 
       {}, 
       getAuthHeaders()
     );
@@ -57,7 +58,7 @@ export const likeComment = async (commentId) => {
 export const deleteComment = async (commentId) => {
   try {
     const response = await axios.delete(
-      `${API_URL}/${commentId}`, 
+      `${COMMENTS_API_URL}/${commentId}`, 
       getAuthHeaders()
     );
     return response.data;

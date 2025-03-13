@@ -1,5 +1,6 @@
 // src/components/Feed/Feed.jsx
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAllTweets } from '../../services/apiPosts';
 import Post from '../Post/Post';
 import './Feed.scss';
@@ -8,6 +9,7 @@ const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
   
   useEffect(() => {
     loadPosts();
@@ -31,6 +33,10 @@ const Feed = () => {
     }
   };
   
+  const handleUserClick = (userId) => {
+    navigate(`/profile/${userId}`);
+  };
+  
   if (loading) {
     return <div className="feed-loading">Chargement des tweets...</div>;
   }
@@ -46,7 +52,11 @@ const Feed = () => {
   return (
     <div className="feed">
       {posts.map(post => (
-        <Post key={post._id} post={post} />
+        <Post 
+          key={post._id} 
+          post={post} 
+          onUserClick={handleUserClick}
+        />
       ))}
     </div>
   );
