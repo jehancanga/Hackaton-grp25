@@ -1,5 +1,6 @@
 import Tweet from "../models/Tweet.js";
 import Hashtag from "../models/Hashtag.js";
+import mongoose from 'mongoose';
 
 
 // 📝 Créer un tweet avec hashtags
@@ -138,67 +139,107 @@ export const retweetTweet = async (req, res) => {
     const originalTweetId = req.params.id;
     const userId = req.user.id;
 
-    const originalTweet = await Tweet.findById(originalTweetId);
-    if (!originalTweet) {
-      return res.status(404).json({ message: "Tweet non trouvé" });
+    // Vérification de la validité de l'ID
+    if (!mongoose.Types.ObjectId.isValid(originalTweetId)) {
+      return res.status(400).json({ message: "Format d'ID de tweet invalide" });
     }
 
+    // Recherche du tweet original
+    console.log("Recherche du tweet original avec ID:", originalTweetId);
+    const originalTweet = await Tweet.findById(originalTweetId);
+    
+    // Vérification de l'existence du tweet original
+    if (!originalTweet) {
+      console.log("Tweet original non trouvé avec ID:", originalTweetId);
+      return res.status(404).json({ message: "Tweet original non trouvé" });
+    }
+    console.log("Tweet original trouvé:", originalTweet._id);
+
+    // Recherche d'un retweet existant par cet utilisateur pour ce tweet
     const existingRetweet = await Tweet.findOne({
       isRetweet: true,
       originalTweetId: originalTweetId,
       retweetedBy: userId
     });
 
+    // Si un retweet existe déjà, l'annuler
     if (existingRetweet) {
-      await Tweet.findByIdAndDelete(existingRetweet._id);
+      console.log("Retweet existant trouvé:", existingRetweet._id);
+      
+      try {
+        // Supprimer LE RETWEET (pas le tweet original)
+        await Tweet.findByIdAndDelete(existingRetweet._id);
+        console.log("Retweet supprimé avec succès");
+        
+        // Retirer l'utilisateur de la liste des retweets du tweet original
+        originalTweet.retweets = originalTweet.retweets.filter(
+          id => id.toString() !== userId.toString()
+        );
+        await originalTweet.save();
 
-      originalTweet.retweets = originalTweet.retweets.filter(
-        id => id.toString() !== userId
-      );
-      await originalTweet.save();
-
-      return res.json({
-        message: "Retweet supprimé",
-        originalTweet: await Tweet.findById(originalTweetId)
+        // Retourner le tweet original mis à jour
+        const updatedOriginalTweet = await Tweet.findById(originalTweetId)
           .populate("userId", "username profilePic")
-          .populate("retweets", "username profilePic")
-      });
+          .populate("retweets", "username profilePic");
+
+        return res.json({
+          message: "Retweet supprimé",
+          originalTweet: updatedOriginalTweet
+        });
+      } catch (deleteError) {
+        console.error("Erreur lors de l'annulation du retweet:", deleteError);
+        return res.status(500).json({ 
+          message: "Erreur lors de l'annulation du retweet",
+          error: process.env.NODE_ENV === 'development' ? deleteError.message : undefined
+        });
+      }
     }
 
-    const retweet = new Tweet({
+    // Créer un nouveau retweet (un nouveau tweet qui fait référence au tweet original)
+    console.log("Création d'un nouveau retweet pour le tweet original:", originalTweetId);
+    const newRetweet = new Tweet({
       content: originalTweet.content,
-      userId: originalTweet.userId, // Conserver l'auteur original
+      userId: originalTweet.userId, // On garde l'auteur original
       isRetweet: true,
       originalTweetId: originalTweetId,
       retweetedBy: userId,
     });
 
-    await retweet.save();
+    // Sauvegarder le nouveau retweet
+    const savedRetweet = await newRetweet.save();
+    console.log("Nouveau retweet créé avec ID:", savedRetweet._id);
 
+    // Ajouter l'utilisateur à la liste des retweets du tweet original
     if (!originalTweet.retweets.includes(userId)) {
       originalTweet.retweets.push(userId);
       await originalTweet.save();
+      console.log("Utilisateur ajouté à la liste des retweets du tweet original");
     }
 
-
+    // Récupérer les versions populées des tweets
     const populatedOriginalTweet = await Tweet.findById(originalTweetId)
       .populate("userId", "username profilePic")
       .populate("retweets", "username profilePic");
 
-    const populatedRetweet = await Tweet.findById(retweet._id)
+    const populatedRetweet = await Tweet.findById(savedRetweet._id)
       .populate("userId", "username profilePic")
       .populate("retweetedBy", "username profilePic");
 
+    // Retourner le résultat
     return res.status(201).json({
-      message: "Retweet créé",
+      message: "Retweet créé avec succès",
       originalTweet: populatedOriginalTweet,
       retweet: populatedRetweet
     });
   } catch (error) {
     console.error("Erreur lors du retweet:", error);
-    return res.status(500).json({ message: "Erreur serveur lors du retweet" });
+    return res.status(500).json({ 
+      message: "Erreur serveur lors du retweet",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
+
 
 
 // Annuler un retweet

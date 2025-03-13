@@ -1,66 +1,48 @@
-// src/components/Feed/HashtagFeed.jsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getTweetsByHashtag } from '../../services/apiPosts';
 import Post from '../Post/Post';
 import './HashtagFeed.scss';
 
 const HashtagFeed = () => {
+  const { hashtag } = useParams();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { hashtag } = useParams(); // Récupère le hashtag depuis l'URL
-  const navigate = useNavigate();
-  
+
   useEffect(() => {
-    loadHashtagPosts();
-  }, [hashtag]);
-  
-  const loadHashtagPosts = async () => {
-    try {
-      setLoading(true);
-      // Assurez-vous de créer cette fonction dans votre service API
-      const fetchedPosts = await getTweetsByHashtag(hashtag);
-      
-      if (!fetchedPosts) {
-        throw new Error("Réponse vide ou invalide");
+    console.log("HashtagFeed: Chargement pour hashtag:", hashtag);
+    
+    const fetchHashtagPosts = async () => {
+      try {
+        setLoading(true);
+        const data = await getTweetsByHashtag(hashtag);
+        console.log("HashtagFeed: Données reçues:", data);
+        setPosts(data);
+        setError(null);
+      } catch (err) {
+        console.error("Erreur lors du chargement des posts avec hashtag:", err);
+        setError(`Impossible de charger les posts avec le hashtag #${hashtag}`);
+      } finally {
+        setLoading(false);
       }
-      
-      setPosts(fetchedPosts);
-    } catch (err) {
-      console.error(`Erreur lors du chargement des tweets avec hashtag #${hashtag}:`, err);
-      setError(`Impossible de charger les tweets avec hashtag #${hashtag}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleUserClick = (userId) => {
-    navigate(`/profile/${userId}`);
-  };
-  
-  if (loading) {
-    return <div className="feed-loading">Chargement des tweets...</div>;
-  }
-  
-  if (error) {
-    return <div className="feed-error">{error}</div>;
-  }
-  
-  if (!posts || posts.length === 0) {
-    return <div className="feed-no-posts">Aucun tweet avec #{hashtag} pour le moment</div>;
-  }
-  
+    };
+
+    fetchHashtagPosts();
+  }, [hashtag]);
+
+  if (loading) return <div className="loading">Chargement des tweets pour #{hashtag}...</div>;
+  if (error) return <div className="error-message">{error}</div>;
+  if (!posts || posts.length === 0) return <div className="no-posts">Aucun tweet avec #{hashtag} pour le moment</div>;
+
   return (
-    <div className="feed">
+    <div className="hashtag-feed">
       <h1 className="hashtag-title">#{hashtag}</h1>
-      {posts.map(post => (
-        <Post 
-          key={post._id} 
-          post={post} 
-          onUserClick={handleUserClick}
-        />
-      ))}
+      <div className="posts-container">
+        {posts.map(post => (
+          <Post key={post._id} post={post} />
+        ))}
+      </div>
     </div>
   );
 };

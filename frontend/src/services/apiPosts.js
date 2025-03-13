@@ -155,17 +155,19 @@ export const unretweet = async (tweetId) => {
 
 export const getTweetsByHashtag = async (hashtag) => {
   try {
-    // Si le hashtag commence par #, enlevez-le
+    // S'assurer que le hashtag n'a pas déjà un # devant
     const cleanHashtag = hashtag.startsWith('#') ? hashtag.substring(1) : hashtag;
+    console.log("API: Recherche des tweets pour hashtag:", cleanHashtag);
     
     const response = await fetch(`/api/hashtag/${cleanHashtag}`);
-    
     if (!response.ok) {
-      throw new Error(`Erreur HTTP ${response.status}`);
+      throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
     }
     
     const data = await response.json();
-    return data.tweets;
+    console.log("API: Données reçues:", data);
+    
+    return data.tweets || data || [];
   } catch (error) {
     console.error('Erreur lors de la récupération des tweets par hashtag:', error);
     throw error;

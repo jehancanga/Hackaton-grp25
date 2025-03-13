@@ -57,42 +57,25 @@ const Post = ({ post }) => {
   const renderContentWithClickableHashtags = (content) => {
     if (!content) return '';
     
-    // Recherche les hashtags (#text) dans le contenu
-    const regex = /#(\w+)/g;
-    const parts = [];
-    let lastIndex = 0;
-    let match;
-    
-    // Clone le contenu pour éviter les erreurs
     const contentStr = String(content);
+    const parts = contentStr.split(/(#\w+)/g);
     
-    while ((match = regex.exec(contentStr)) !== null) {
-      // Ajoute le texte avant le hashtag
-      if (match.index > lastIndex) {
-        parts.push(contentStr.substring(lastIndex, match.index));
+    return parts.map((part, index) => {
+      if (part.startsWith('#')) {
+        // Enlever le # avant de créer l'URL
+        const hashtag = part.substring(1); // Enlève le #
+        return (
+          <Link 
+            key={index} 
+            to={`/hashtag/${hashtag}`} // Sans le #
+            className="hashtag-link"
+          >
+            {part}
+          </Link>
+        );
       }
-      
-      // Ajoute le hashtag sous forme de lien
-      const hashtag = match[1]; // Sans le #
-      parts.push(
-        <Link 
-          key={`hashtag-${match.index}`} 
-          to={`/hashtag/${hashtag}`}
-          className="hashtag-link"
-        >
-          {match[0]} {/* match[0] inclut le # */}
-        </Link>
-      );
-      
-      lastIndex = regex.lastIndex;
-    }
-    
-    // Ajoute le reste du texte
-    if (lastIndex < contentStr.length) {
-      parts.push(contentStr.substring(lastIndex));
-    }
-    
-    return parts.length > 0 ? parts : contentStr;
+      return part;
+    });
   };
 
   return (
@@ -142,15 +125,21 @@ const Post = ({ post }) => {
         {/* ✅ Affichage des hashtags explicites avec liens */}
         {updatedPost.hashtags && updatedPost.hashtags.length > 0 && (
           <div className="post-hashtags">
-            {updatedPost.hashtags.map((tag, index) => (
-              <Link 
-                key={`explicit-hashtag-${index}`} 
-                to={`/hashtag/${encodeURIComponent(tag.hashtag || tag)}`} 
-                className="hashtag-link"
-              >
-                {tag.hashtag || `#${tag}`}
-              </Link>
-            ))}
+            {updatedPost.hashtags.map((tag, index) => {
+              // S'assurer qu'on a le bon format
+              const tagText = tag.hashtag || tag;
+              const cleanTag = tagText.startsWith('#') ? tagText.substring(1) : tagText;
+              
+              return (
+                <Link 
+                  key={`explicit-hashtag-${index}`} 
+                  to={`/hashtag/${cleanTag}`} // Sans le # dans l'URL
+                  className="hashtag-link"
+                >
+                  {tagText.startsWith('#') ? tagText : `#${tagText}`}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
