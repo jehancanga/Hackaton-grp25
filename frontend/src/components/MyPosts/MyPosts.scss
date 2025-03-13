@@ -1,23 +1,39 @@
 .myposts {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  
-    h2 {
-      text-align: center;
-      color: #4a59b0;
-    }
-  
-    .error {
-      color: red;
-      text-align: center;
-    }
-  
-    .post-list {
-      margin-top: 20px;
-    }
+  max-width: 650px; // ✅ Même largeur que le feed pour l'harmonie
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 100px; // ✅ Pour éviter d'être caché par le header fixe
+
+  h2 {
+    text-align: center;
+    color: #4a59b0;
+    margin-bottom: 15px; // ✅ Espacement sous le titre
   }
-  
+
+  .error {
+    color: red;
+    text-align: center;
+  }
+
+  .post-list {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .myposts {
+    max-width: 90%;
+    margin-top: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .myposts {
+    max-width: 95%;
+    margin-top: 70px;
+  }
+}

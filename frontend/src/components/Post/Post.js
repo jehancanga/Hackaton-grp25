@@ -53,8 +53,7 @@ const Post = ({ post }) => {
       return 'date inconnue';
     }
   };
-  
-  
+
   return (
     <div className="post">
       <div className="post-header">
@@ -96,6 +95,17 @@ const Post = ({ post }) => {
                 e.target.style.display = 'none';
               }}
             />
+          </div>
+        )}
+
+        {/* ✅ Affichage des hashtags avec liens */}
+        {updatedPost.hashtags && updatedPost.hashtags.length > 0 && (
+          <div className="post-hashtags">
+            {updatedPost.hashtags.map((tag, index) => (
+              <Link key={index} to={`/hashtag/${encodeURIComponent(tag.hashtag)}`} className="hashtag-link">
+                {tag.hashtag}
+              </Link>
+            ))}
           </div>
         )}
       </div>

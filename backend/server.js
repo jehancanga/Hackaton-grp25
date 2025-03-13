@@ -8,6 +8,7 @@ import tweetRoutes from "./routes/tweetRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import hashtagRoutes from "./routes/hashtagRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -25,7 +26,6 @@ app.use((req, res, next) => {
 
     next();
 });
-
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
@@ -45,6 +45,7 @@ app.use("/api/tweets", tweetRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/hashtags", hashtagRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));

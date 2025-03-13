@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getCurrentUser, updateUserProfile } from "../../services/apiUsers";
@@ -12,17 +12,24 @@ const isAuthenticated = () => {
 
 const ProfileSettings = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
-  const [followers, setFollowers] = useState(0);
-  const [following, setFollowing] = useState(0); 
-  const [tweets, setTweets] = useState(0);
-  const [profileImage, setProfileImage] = useState("");
-  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [userData, setUserData] = useState({
+    username: "",
+    bio: "",
+    profilePic: "",
+    followers: 0,
+    following: 0,
+    tweets: 0,
+  });
+  const [imageFile, setImageFile] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [emotion, setEmotion] = useState("Neutre");
+  const [cameraActive, setCameraActive] = useState(false);
+
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
   const [currentUsername, setCurrentUsername] = useState("");
   const [followModalVisible, setFollowModalVisible] = useState(false);
   const [followModalType, setFollowModalType] = useState('followers');
@@ -43,6 +50,14 @@ const ProfileSettings = () => {
       try {
         const user = getCurrentUser();
         if (user) {
+          setUserData({
+            username: user.username || "",
+            bio: user.bio || "",
+            profilePic: user.profilePic || "https://via.placeholder.com/150",
+            followers: user.followers?.length || 0,
+            following: user.following?.length || 0,
+            tweets: user.tweets?.length || 0,
+          });
           console.log("✅ Utilisateur récupéré:", user);
           setCurrentUser(user);
           
@@ -85,60 +100,105 @@ const ProfileSettings = () => {
           window.location.href = '/login';
         }
       } catch (error) {
+        console.error("Erreur lors du chargement des données:", error);
+        toast.error("Erreur lors du chargement du profil");
         console.error("❌ Erreur lors du chargement des données:", error);
         toast.error("Erreur lors du chargement des données de profil");
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchUserData();
-    
-    // Nettoyage des ressources blob au démontage
-    return () => {
-      if (profileImage && profileImage.startsWith('blob:')) {
-        URL.revokeObjectURL(profileImage);
-      }
-    };
   }, []);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-  
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.warning("L'image est trop grande ! Maximum 5 MB autorisé.");
-        return;
+  // 📸 Gérer l'activation/désactivation de la caméra
+  const toggleCamera = async () => {
+    if (!cameraActive) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+        if (stream && videoRef.current) {
+          videoRef.current.srcObject = stream;
+          streamRef.current = stream;
+          setCameraActive(true);
+
+          // ✅ Affiche la notif SEULEMENT si elle n'a pas été affichée avant
+          toast.dismiss();  // Supprime toutes les anciennes notifications
+          toast.success("Caméra activée avec succès !");
+        } else {
+          throw new Error("Flux vidéo introuvable");
+        }
+      } catch (error) {
+        console.error("🚨 Erreur lors de l'activation de la caméra :", error);
+
+        // ✅ Vérifie si l'utilisateur a explicitement refusé
+        if (error.name === "NotAllowedError") {
+          toast.error("Accès à la caméra refusé. Vérifiez les permissions.");
+        }
       }
-  
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64String = event.target.result;
-        setProfileImage(base64String);
-      };
-      
-      reader.readAsDataURL(file);
-  
-      toast.info("Image sélectionnée. N'oubliez pas de sauvegarder pour l'appliquer.", {
-        autoClose: 3000,
-      });
+    } else {
+      // ✅ Désactive proprement la caméra et vide la source vidéo
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+      setCameraActive(false);
+
+      // ✅ Supprime toute ancienne notification et affiche un message propre
+      toast.dismiss();
+      toast.info("Caméra désactivée.");
     }
-  };
-  
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
   };
 
+
+
+  // 🎭 Détection d'émotion via la caméra (Envoi image au backend Flask)
+  const sendImageToEmotionAI = async () => {
+    if (!videoRef.current) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append("image", blob);
+      formData.append("user_id", getCurrentUser()?._id);
+
+      try {
+        const response = await fetch("http://localhost:5000/api/emotions/predict", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        setEmotion(data.emotion);
+        toast.info(`Émotion détectée : ${data.emotion}`);
+      } catch (error) {
+        console.error("Erreur lors de l'analyse de l'émotion :", error);
+      }
+    }, "image/jpeg");
+  };
+
+  // 📤 Mettre à jour le profil
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-  
-    if (!isAuthenticated()) {
-      toast.error("Vous devez être authentifié pour mettre à jour votre profil");
-      return;
-    }
-  
-    const loadingToastId = toast.loading("Mise à jour de votre profil...");
     setIsLoading(true);
+
+    const data = {
+      username: userData.username.trim(),
+      bio: userData.bio.trim(),
+      profilePic: userData.profilePic,
+    };
+
+    try {
+      await updateUserProfile(data);
+      toast.success("Profil mis à jour avec succès !");
+      window.location.reload();
   
     try {
       // Construire l'objet JSON avec l'image en Base64
@@ -179,18 +239,12 @@ const ProfileSettings = () => {
       window.location.reload();
 
     } catch (error) {
-      console.error("❌ Erreur lors de la mise à jour du profil :", error);
-  
-      toast.update(loadingToastId, {
-        render: error.response?.data?.message || "Erreur lors de la mise à jour du profil",
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
+      toast.error("Erreur lors de la mise à jour du profil.");
     } finally {
       setIsLoading(false);
     }
   };
+
   
   const handlePasswordUpdate = (e) => {
     e.preventDefault();
@@ -246,6 +300,9 @@ const ProfileSettings = () => {
     <div className="settings-container">
       <div className="profile-header">
         <div className="profile-main">
+          <div className="profile-image-container">
+            <img src={userData.profilePic} alt="Profile" className="profile-image" />
+            <input type="file" id="profile-pic" className="hidden-input" onChange={e => setImageFile(e.target.files[0])} accept="image/*" />
           <div className="user-profile-info">
             <div className="profile-image-container">
               <div className="profile-image">
@@ -271,9 +328,14 @@ const ProfileSettings = () => {
               <h2>{currentUsername || "Utilisateur"}</h2>
             </div>
           </div>
+          <h2>{userData.username || "Utilisateur"}</h2>
+          <p>{userData.bio}</p>
         </div>
   
         <div className="profile-stats">
+          <span>{userData.tweets} Tweets</span>
+          <span>{userData.followers} Followers</span>
+          <span>{userData.following} Following</span>
           <div className="stat-item">
             <span className="stat-value">{tweets}</span>
             <span className="stat-label">Tweets</span>
@@ -290,55 +352,35 @@ const ProfileSettings = () => {
       </div>
   
       <div className="tabs">
-        <button className={`tab-button ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}>
-          Profil
-        </button>
-        <button className={`tab-button ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}>
-          Sécurité
-        </button>
+        <button className={`tab-button ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}>Profil</button>
+        <button className={`tab-button ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}>Sécurité</button>
+        <button className={`tab-button ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}>Caméra IA</button>
       </div>
   
       {activeTab === 0 && (
         <form className="settings-form" onSubmit={handleProfileUpdate}>
-          <div className="form-group">
-            <input 
-              type="text" 
-              value={username} 
-              onChange={handleUsernameChange} 
-              placeholder="Nom d'utilisateur" 
-              className="input-field" 
-            />
-          </div>
-          <div className="form-group">
-            <textarea 
-              value={bio} 
-              onChange={(e) => setBio(e.target.value)} 
-              placeholder="Ma bio" 
-              className="input-field bio-field" 
-              rows={4} 
-            />
-          </div>
-          <button type="submit" className="save-button" disabled={isLoading}>
-            {isLoading ? "Sauvegarde en cours..." : "Sauvegarder"}
-          </button>
+          <input type="text" value={userData.username} onChange={e => setUserData({ ...userData, username: e.target.value })} placeholder="Nom d'utilisateur" />
+          <textarea value={userData.bio} onChange={e => setUserData({ ...userData, bio: e.target.value })} placeholder="Ma bio" rows={4} />
+          <button type="submit" disabled={isLoading}>{isLoading ? "Sauvegarde en cours..." : "Sauvegarder"}</button>
         </form>
       )}
   
       {activeTab === 1 && (
-        <form className="settings-form" onSubmit={handlePasswordUpdate}>
-          <div className="form-group">
-            <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="Mot de passe actuel" className="input-field" />
-          </div>
-          <div className="form-group">
-            <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Nouveau mot de passe" className="input-field" />
-          </div>
-          <div className="form-group">
-            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirmer le mot de passe" className="input-field" />
-          </div>
-          <button type="submit" className="save-button">
-            Mettre à jour le mot de passe
-          </button>
+        <form className="settings-form">
+          <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Mot de passe actuel" />
+          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Nouveau mot de passe" />
+          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirmer le mot de passe" />
+          <button type="submit">Mettre à jour</button>
         </form>
+      )}
+
+      {activeTab === 2 && (
+        <div className="camera-section">
+          <button onClick={toggleCamera}>{cameraActive ? "Désactiver la caméra" : "Activer la caméra"}</button>
+          {cameraActive && <video ref={videoRef} autoPlay playsInline />}
+          {cameraActive && <button onClick={sendImageToEmotionAI}>Analyser l'émotion</button>}
+          <p>Émotion détectée : {emotion}</p>
+        </div>
       )}
   
       {/* Ne montrer le modal que si userId existe et que le modal est visible */}
