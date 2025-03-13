@@ -1,20 +1,45 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTweet } from "../../services/apiPosts";
+import { FiImage, FiXCircle } from "react-icons/fi";
 import "./NewPost.scss";
 
 // Ajoutez detectedEmotion aux props
 const NewPost = ({ onPostCreated, detectedEmotion }) => {
   const [formData, setFormData] = useState({ content: "", media: "" });
+  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Récupérer l'utilisateur connecté
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError("L'image est trop grande ! Maximum 5MB autorisé.");
+        return;
+      }
+
+      setImageFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, media: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setFormData((prev) => ({ ...prev, media: "" }));
   };
 
   const handleSubmit = async (e) => {
@@ -38,16 +63,10 @@ const NewPost = ({ onPostCreated, detectedEmotion }) => {
       detectedEmotion: detectedEmotion || "neutral" // Inclure l'émotion détectée
     };
 
-    console.log("🔍 Données envoyées au backend :", tweetData);
-
     try {
       const response = await createTweet(tweetData, token);
       if (response) {
-        console.log("✅ Tweet créé avec succès :", response);
-        
-        // Notifier le parent que le post a été créé
         if (onPostCreated) onPostCreated();
-        
         navigate("/");
       } else {
         setError("Erreur lors de la création du post.");
@@ -77,12 +96,24 @@ const NewPost = ({ onPostCreated, detectedEmotion }) => {
           onChange={handleChange}
           required
         />
-        <input
-          type="text"
-          name="media"
-          placeholder="Lien d'une image/vidéo (facultatif)"
-          onChange={handleChange}
-        />
+        
+        {/* Bouton stylisé pour ajouter une image */}
+        <label className="image-upload-btn">
+          <FiImage className="icon" />
+          Ajouter une image
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+        </label>
+
+        {/* Aperçu de l'image avec possibilité de suppression */}
+        {imageFile && (
+          <div className="preview">
+            <img src={URL.createObjectURL(imageFile)} alt="Preview" />
+            <button type="button" className="remove-img" onClick={handleRemoveImage}>
+              <FiXCircle />
+            </button>
+          </div>
+        )}
+
         <button type="submit">Publier</button>
       </form>
     </div>

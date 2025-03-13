@@ -56,7 +56,7 @@ export const getUserProfile = async (userId) => {
 };
 
 
-export const updateUserProfile = async (formData) => {
+export const updateUserProfile = async (data) => {
   try {
     // Récupérer directement le token
     const token = localStorage.getItem("authToken");
@@ -65,32 +65,31 @@ export const updateUserProfile = async (formData) => {
       throw new Error("Non authentifié");
     }
 
-    // Configuration pour axios avec le token
+    // 🚀 Log des données envoyées avant envoi
+    console.log("📤 Données envoyées au backend :", data);
+
+    // Configuration pour axios avec le bon format JSON
     const config = {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json' // 🔥 On force l'envoi en JSON
       }
     };
 
-    // 🚀 Ajoute un log des données envoyées
-    for (let pair of formData.entries()) {
-      console.log(`📤 Données envoyées -> ${pair[0]}:`, pair[1]);
-    }
-
     const response = await axios.put(
       `${API_URL}/profile`,
-      formData,
+      JSON.stringify(data), // 🔥 On envoie un JSON au lieu d'un FormData
       config
     );
 
-    // ✅ Ajoute un log de la réponse du serveur
+    // ✅ Log de la réponse reçue
     console.log("✅ Réponse du serveur :", response.data);
 
     return response.data;
   } catch (error) {
     console.error("❌ Erreur mise à jour profil :", error.response?.data);
 
-    // 🚨 Ajoute un log des erreurs serveur
+    // 🔴 Log complet de l'erreur serveur
     if (error.response) {
       console.log("🔴 Erreur complète du serveur :", error.response);
     }
@@ -98,8 +97,6 @@ export const updateUserProfile = async (formData) => {
     throw error;
   }
 };
-
-
 
 export const followUser = async (userId) => {
   try {

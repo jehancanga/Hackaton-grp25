@@ -1,39 +1,15 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const NotificationSchema = new mongoose.Schema({
-  recipient: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+const notificationSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    type: { type: String, enum: ["like", "retweet", "mention", "follow"], required: true },
+    fromUserId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    tweetId: { type: mongoose.Schema.Types.ObjectId, ref: "Tweet" },
+    read: { type: Boolean, default: false },
   },
-  sender: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  type: {
-    type: String,
-    enum: ['like', 'retweet', 'reply', 'follow', 'mention', 'emotion_insight'],
-    required: true
-  },
-  tweetId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tweet'
-  },
-  emotionData: {
-    emotion: String,
-    confidence: Number
-  },
-  message: {
-    type: String
-  },
-  isRead: {
-    type: Boolean,
-    default: false
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Notification', NotificationSchema);
+const Notification = mongoose.model("Notification", notificationSchema);
+export default Notification;

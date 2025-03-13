@@ -21,7 +21,7 @@ router.get("/category/:category", getTweetsByCategory);
 router.get("/emotion/:emotion", getTweetsByEmotion);
 router.get("/recommended/:emotion", protect, getRecommendedTweetsByEmotion);
 router.post("/:id/like", protect, likeTweet);
-router.post("/:id/retweet", protect, retweet);
+router.post("/:id/retweet", protect, retweetTweet);
 router.delete("/:id", protect, deleteTweet);
 
 export default router;

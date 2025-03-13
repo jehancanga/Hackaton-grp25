@@ -33,16 +33,12 @@ export const registerUser = async (req, res) => {
 // 🔑 Connexion
 export const loginUser = async (req, res) => {
     try {
-        console.log("📩 Données reçues :", req.body);
-
         const { email, password } = req.body;
         const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(400).json({ message: "Email ou mot de passe incorrect" });
         }
-
-        console.log("✅ Utilisateur trouvé :", user);
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
@@ -77,8 +73,7 @@ export const getUserProfile = async (req, res) => {
 // ✏️ Modifier le profil utilisateur (photo de profil, bannière, pseudo, bio, email facultatif)
 export const updateUserProfile = async (req, res) => {
     try {
-        // 🔍 Log des données reçues
-        console.log("📩 Données reçues pour mise à jour du profil :", req.body);
+        console.log("📩 Données reçues pour mise à jour du profil :", req.body); // 🔍 Log des données reçues
 
         const { username, profilePic, bannerPic, bio, email } = req.body;
         const user = await User.findById(req.user.id);
@@ -105,13 +100,12 @@ export const updateUserProfile = async (req, res) => {
             console.log("📝 Mise à jour de la bio :", bio);
             user.bio = bio;
         }
-
         if (email && email !== user.email) {
             console.log("📧 Vérification de l'email :", email);
             // Vérifier si l'email est déjà utilisé par un autre utilisateur
             const emailExists = await User.findOne({ email });
             if (emailExists) {
-                console.warn("⚠️ Email déjà utilisé par un autre compte :", email);
+                console.warn("⚠️ Email déjà utilisé :", email);
                 return res.status(400).json({ message: "Cet email est déjà utilisé par un autre compte." });
             }
             console.log("✅ Mise à jour de l'email :", email);
@@ -123,53 +117,107 @@ export const updateUserProfile = async (req, res) => {
 
         res.json({ message: "Profil mis à jour avec succès", user });
     } catch (error) {
-        console.error("❌ Erreur mise à jour profil:", error);
+        console.error("❌ Erreur mise à jour profil :", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
-// ➕ Suivre un utilisateur
+
+// Suivre un utilisateur
 export const followUser = async (req, res) => {
     try {
-        const userToFollow = await User.findById(req.params.id);
-        const currentUser = await User.findById(req.user.id);
-
-        if (!userToFollow || currentUser.following.includes(userToFollow._id)) {
-            return res.status(400).json({ message: "Déjà suivi" });
-        }
-
-        currentUser.following.push(userToFollow._id);
-        userToFollow.followers.push(currentUser._id);
-        await currentUser.save();
-        await userToFollow.save();
-
-        res.json({ message: "Utilisateur suivi avec succès !" });
+      const currentUserId = req.user._id;
+      const targetUserId = req.params.id;
+      
+      // Vérifier qu'on n'essaie pas de se suivre soi-même
+      if (currentUserId.toString() === targetUserId) {
+        return res.status(400).json({ message: "Impossible de se suivre soi-même" });
+      }
+      
+      // Vérifier si l'utilisateur cible existe
+      const targetUser = await User.findById(targetUserId);
+      if (!targetUser) {
+        return res.status(404).json({ message: "Utilisateur cible introuvable" });
+      }
+      
+      // Vérifier si l'utilisateur actuel ne suit pas déjà l'utilisateur cible
+      const currentUser = await User.findById(currentUserId);
+      if (currentUser.following.includes(targetUserId)) {
+        return res.status(400).json({ message: "Vous suivez déjà cet utilisateur" });
+      }
+      
+      // Mettre à jour les deux utilisateurs de manière atomique
+      const [updatedCurrentUser, updatedTargetUser] = await Promise.all([
+        User.findByIdAndUpdate(
+          currentUserId, 
+          { $addToSet: { following: targetUserId } }, 
+          { new: true }
+        ),
+        User.findByIdAndUpdate(
+          targetUserId, 
+          { $addToSet: { followers: currentUserId } }, 
+          { new: true }
+        )
+      ]);
+      
+      // Renvoyer les compteurs mis à jour
+      res.json({ 
+        message: "Utilisateur suivi avec succès",
+        followerCount: updatedTargetUser.followers.length,
+        followingCount: updatedCurrentUser.following.length,
+        isFollowing: true
+      });
     } catch (error) {
-        res.status(500).json({ message: "Erreur serveur" });
+      console.error("Erreur lors du suivi d'utilisateur:", error);
+      res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
-};
-
-// ➖ Ne plus suivre un utilisateur
-export const unfollowUser = async (req, res) => {
+  };
+  
+  // Ne plus suivre un utilisateur
+  export const unfollowUser = async (req, res) => {
     try {
-        const userToUnfollow = await User.findById(req.params.id);
-        const currentUser = await User.findById(req.user.id);
-
-        if (!userToUnfollow || !currentUser.following.includes(userToUnfollow._id)) {
-            return res.status(400).json({ message: "Utilisateur non suivi" });
-        }
-
-        currentUser.following = currentUser.following.filter(id => id.toString() !== userToUnfollow._id.toString());
-        userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== currentUser._id.toString());
-
-        await currentUser.save();
-        await userToUnfollow.save();
-
-        res.json({ message: "Utilisateur retiré de la liste des suivis" });
+      const currentUserId = req.user._id;
+      const targetUserId = req.params.id;
+      
+      // Vérifier si l'utilisateur cible existe
+      const targetUser = await User.findById(targetUserId);
+      if (!targetUser) {
+        return res.status(404).json({ message: "Utilisateur cible introuvable" });
+      }
+      
+      // Vérifier si l'utilisateur actuel suit bien l'utilisateur cible
+      const currentUser = await User.findById(currentUserId);
+      if (!currentUser.following.some(id => id.toString() === targetUserId)) {
+        return res.status(400).json({ message: "Vous ne suivez pas cet utilisateur" });
+      }
+      
+      // Mettre à jour les deux utilisateurs de manière atomique
+      const [updatedCurrentUser, updatedTargetUser] = await Promise.all([
+        User.findByIdAndUpdate(
+          currentUserId, 
+          { $pull: { following: targetUserId } }, 
+          { new: true }
+        ),
+        User.findByIdAndUpdate(
+          targetUserId, 
+          { $pull: { followers: currentUserId } }, 
+          { new: true }
+        )
+      ]);
+      
+      // Renvoyer les compteurs mis à jour
+      res.json({ 
+        message: "Utilisateur non suivi avec succès",
+        followerCount: updatedTargetUser.followers.length,
+        followingCount: updatedCurrentUser.following.length,
+        isFollowing: false
+      });
     } catch (error) {
-        res.status(500).json({ message: "Erreur serveur" });
+      console.error("Erreur lors du désabonnement:", error);
+      res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
-};
+  };
+  
 
 // 🔄 Réinitialisation du mot de passe
 export const resetPassword = async (req, res) => {
@@ -266,11 +314,9 @@ export const blockUser = async (req, res) => {
             return res.status(401).json({ message: "Utilisateur non authentifié" });
         }
 
-        console.log('Début de la fonction blockUser');
-        
+
         // Recherche de l'utilisateur à bloquer
         const userToBlock = await User.findById(req.params.id);
-        console.log('Utilisateur à bloquer :', userToBlock);
 
         if (!userToBlock) {
             console.error('Utilisateur non trouvé');
@@ -307,18 +353,18 @@ export const unblockUser = async (req, res) => {
         if (!req.user) {
             console.error('Utilisateur non authentifié');
             return res.status(401).json({ message: "Utilisateur non authentifié" });
-          }
-        
+        }
+
         const userToUnblock = await User.findById(req.params.id);
-        
+
         if (!userToUnblock) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-       const blockedIndex = req.user.blockedUsers.indexOf(req.params.id);
+        const blockedIndex = req.user.blockedUsers.indexOf(req.params.id);
         if (blockedIndex === -1) {
             return res.status(400).json({ message: "Cet utilisateur n'est pas bloqué" });
         }
 
-         req.user.blockedUsers.splice(blockedIndex, 1);
+        req.user.blockedUsers.splice(blockedIndex, 1);
         await req.user.save();
 
         res.json({ message: `Utilisateur ${userToUnblock.username} débloqué avec succès` });
@@ -326,3 +372,92 @@ export const unblockUser = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
+
+
+export const identifier = async (req, res) => {
+    try {
+        const { identifier } = req.params;
+        console.log(`API - Recherche utilisateur avec identifier: ${identifier}`);
+        let user;
+        
+        // Tenter par ID d'abord (les IDs MongoDB ont généralement 24 caractères)
+        if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+          console.log(`API - Tentative de recherche par ID: ${identifier}`);
+          // Enlever le populate qui cause l'erreur
+          user = await User.findById(identifier);
+          if (user) {
+            console.log(`API - Utilisateur trouvé par ID: ${user.username}`);
+          }
+        }
+        
+        // Si non trouvé ou pas un format d'ID, chercher par nom d'utilisateur
+        if (!user) {
+          console.log(`API - Tentative de recherche par username: ${identifier}`);
+          // Enlever le populate qui cause l'erreur
+          user = await User.findOne({ username: identifier });
+          if (user) {
+            console.log(`API - Utilisateur trouvé par username: ${user.username}`);
+          }
+        }
+        
+        if (!user) {
+          console.log(`API - Utilisateur non trouvé pour identifier: ${identifier}`);
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+        
+        // Si besoin, récupérer les tweets séparément
+        try {
+          // Supposons que les tweets sont stockés dans une collection séparée
+          // et qu'ils ont un champ userId ou authorId qui fait référence à l'utilisateur
+          const tweets = await Tweet.find({ userId: user._id });
+          
+          // Ajouter les tweets à l'objet utilisateur avant de le renvoyer
+          const userWithTweets = user.toObject(); // Convertir en objet simple
+          userWithTweets.tweets = tweets;
+          
+          res.json(userWithTweets);
+        } catch (tweetError) {
+          console.warn("Impossible de récupérer les tweets:", tweetError);
+          // Renvoyer l'utilisateur sans les tweets si on ne peut pas les récupérer
+          res.json(user);
+        }
+      } catch (error) {
+        console.error("Erreur détaillée lors de la recherche d'utilisateur:", error);
+        res.status(500).json({ message: "Erreur serveur", details: error.message });
+      }
+};
+      
+// Vérifier si l'utilisateur actuel suit un autre utilisateur
+export const getFollowStatus = async (req, res) => {
+    try {
+      const currentUserId = req.user._id;
+      const targetUserId = req.params.id;
+      
+      // Récupérer les deux utilisateurs en parallèle pour plus d'efficacité
+      const [targetUser, currentUser] = await Promise.all([
+        User.findById(targetUserId),
+        User.findById(currentUserId)
+      ]);
+      
+      if (!targetUser) {
+        return res.status(404).json({ message: "Utilisateur cible introuvable" });
+      }
+      
+      if (!currentUser) {
+        return res.status(404).json({ message: "Utilisateur actuel introuvable" });
+      }
+      
+      // Vérifier si l'utilisateur actuel suit déjà l'utilisateur cible
+      const isFollowing = currentUser.following.some(id => id.toString() === targetUserId);
+      
+      res.json({
+        isFollowing,
+        followerCount: targetUser.followers.length,
+        followingCount: targetUser.following.length
+      });
+    } catch (error) {
+      console.error("Erreur lors de la vérification du statut de suivi:", error);
+      res.status(500).json({ message: "Erreur serveur", error: error.message });
+    }
+  };
+  
