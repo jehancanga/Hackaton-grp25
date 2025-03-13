@@ -63,3 +63,52 @@ export const createMultipleHashtags = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
+
+export const getHashtagFeed = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const hashtagName = name.startsWith('#') ? name : `#${name}`;
+
+    // Récupérer tous les tweets contenant ce hashtag
+    const tweets = await Tweet.findAll({
+      where: {
+        // Utiliser LIKE pour trouver le hashtag dans le contenu
+        content: {
+          [Op.like]: `%${hashtagName}%`
+        }
+      },
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'username', 'profilePic']
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Si c'est une requête API
+    if (req.xhr || req.headers.accept.includes('application/json')) {
+      return res.json({
+        success: true,
+        tweets,
+        hashtagName
+      });
+    }
+
+    // Sinon, renvoyer la page HTML
+    return res.render('hashtagFeed', {
+      tweets,
+      hashtagName,
+      title: `Tweets avec ${hashtagName}`
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des tweets par hashtag:', error);
+    return res.status(500).json({
+      success: false,
+      message: "Une erreur s'est produite lors de la récupération des tweets",
+      error: error.message
+    });
+  }
+};
+
+

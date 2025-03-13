@@ -10,7 +10,9 @@ import NewPost from "./components/NewPost/NewPost";
 import MyPosts from "./components/MyPosts/MyPosts";
 import Settings from "./components/settings/settings";
 import ProfilUser from "./components/profilUser/profilUser";
+import HashtagFeed from "./components/HashtagFeed/HashtagFeed";
 import 'antd/dist/reset.css';
+
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <Route path="/myposts" element={<MyPosts />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/profile/:userId" element={<ProfilUser />} />
+          <Route path="/hashtag/:hashtag" element={<HashtagFeed />} />
         </Routes>
  
         <ToastContainer

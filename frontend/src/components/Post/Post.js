@@ -54,6 +54,47 @@ const Post = ({ post }) => {
     }
   };
 
+  const renderContentWithClickableHashtags = (content) => {
+    if (!content) return '';
+    
+    // Recherche les hashtags (#text) dans le contenu
+    const regex = /#(\w+)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    
+    // Clone le contenu pour éviter les erreurs
+    const contentStr = String(content);
+    
+    while ((match = regex.exec(contentStr)) !== null) {
+      // Ajoute le texte avant le hashtag
+      if (match.index > lastIndex) {
+        parts.push(contentStr.substring(lastIndex, match.index));
+      }
+      
+      // Ajoute le hashtag sous forme de lien
+      const hashtag = match[1]; // Sans le #
+      parts.push(
+        <Link 
+          key={`hashtag-${match.index}`} 
+          to={`/hashtag/${hashtag}`}
+          className="hashtag-link"
+        >
+          {match[0]} {/* match[0] inclut le # */}
+        </Link>
+      );
+      
+      lastIndex = regex.lastIndex;
+    }
+    
+    // Ajoute le reste du texte
+    if (lastIndex < contentStr.length) {
+      parts.push(contentStr.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : contentStr;
+  };
+
   return (
     <div className="post">
       <div className="post-header">
@@ -78,7 +119,7 @@ const Post = ({ post }) => {
       
       <div className="post-body">
         {postContent ? (
-          <p className="post-text">{postContent}</p>
+          <p className="post-text">{renderContentWithClickableHashtags(postContent)}</p>
         ) : (
           <p className="post-text post-empty">Ce post ne contient pas de texte</p>
         )}
@@ -98,12 +139,16 @@ const Post = ({ post }) => {
           </div>
         )}
 
-        {/* ✅ Affichage des hashtags avec liens */}
+        {/* ✅ Affichage des hashtags explicites avec liens */}
         {updatedPost.hashtags && updatedPost.hashtags.length > 0 && (
           <div className="post-hashtags">
             {updatedPost.hashtags.map((tag, index) => (
-              <Link key={index} to={`/hashtag/${encodeURIComponent(tag.hashtag)}`} className="hashtag-link">
-                {tag.hashtag}
+              <Link 
+                key={`explicit-hashtag-${index}`} 
+                to={`/hashtag/${encodeURIComponent(tag.hashtag || tag)}`} 
+                className="hashtag-link"
+              >
+                {tag.hashtag || `#${tag}`}
               </Link>
             ))}
           </div>

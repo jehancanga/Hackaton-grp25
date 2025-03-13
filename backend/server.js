@@ -9,6 +9,7 @@ import commentRoutes from "./routes/commentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import hashtagRoutes from "./routes/hashtagRoutes.js";
+import searchRoutes from "./routes/searchRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -46,6 +47,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/hashtags", hashtagRoutes);
+app.use('/api/search', searchRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
