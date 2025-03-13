@@ -8,11 +8,7 @@ const POSTS_URL = `${API_URL}/tweets`;
 // 📝 **Créer un tweet**
 export const createTweet = async (tweetData) => {
   try {
-    console.log("📤 Envoi du tweet :", tweetData);
-    
     const response = await axios.post(POSTS_URL, tweetData, getAuthHeaders());
-
-    console.log("✅ Réponse du serveur :", response.data);
     return response.data;
   } catch (error) {
     console.error("❌ Erreur lors de la création du tweet :", error.response?.data);

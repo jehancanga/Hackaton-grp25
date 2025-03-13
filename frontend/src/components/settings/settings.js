@@ -51,7 +51,6 @@ const ProfileSettings = () => {
           
           setProfileImage(user.profilePic || "https://via.placeholder.com/150");
         } else {
-          console.log("Aucun utilisateur trouvé dans le localStorage");
           toast.info("Veuillez vous connecter pour voir votre profil");
         }
       } catch (error) {
@@ -74,82 +73,86 @@ const ProfileSettings = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+  
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         toast.warning("L'image est trop grande ! Maximum 5 MB autorisé.");
         return;
       }
-
-      setProfileImageFile(file);
-      
-      // Utilisation de FileReader au lieu de URL.createObjectURL
+  
       const reader = new FileReader();
       reader.onload = (event) => {
-        setProfileImage(event.target.result);
+        const base64String = event.target.result; // 🔥 Convertit l'image en Base64
+        setProfileImage(base64String);
       };
-      reader.readAsDataURL(file);
-
+      
+      reader.readAsDataURL(file); // 🔥 Convertit le fichier en Base64
+  
       toast.info("Image sélectionnée. N'oubliez pas de sauvegarder pour l'appliquer.", {
-        autoClose: 3000
+        autoClose: 3000,
       });
     }
   };
+  
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-
+  
     if (!isAuthenticated()) {
       toast.error("Vous devez être authentifié pour mettre à jour votre profil");
       return;
     }
-
+  
     const loadingToastId = toast.loading("Mise à jour de votre profil...");
     setIsLoading(true);
-
+  
     try {
-      const formData = new FormData();
-      formData.append("username", username);
-      formData.append("bio", bio);
-
-      if (profileImageFile) {
-        formData.append("profileImage", profileImageFile);
-      }
-
-      const result = await updateUserProfile(formData);
-      console.log("Résultat de la mise à jour:", result);
-
+      // 🔥 Construire l'objet JSON avec l'image en Base64
+      const data = {
+        username: username.trim(),
+        bio: bio.trim(),
+        profilePic: profileImage, // 🔥 Image en Base64
+      };
+  
+      console.log("📤 Données envoyées en JSON :", data);
+  
+      const result = await updateUserProfile(data);
+  
+      console.log("✅ Réponse du serveur :", result);
+  
       const currentUser = getCurrentUser();
       if (currentUser) {
         const updatedUser = {
           ...currentUser,
           username,
           bio,
-          profilePic: result.profilePic || profileImage
+          profilePic: result.user.profilePic || profileImage,
         };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       }
-
+  
       toast.update(loadingToastId, {
         render: "Profil mis à jour avec succès ! ✅",
         type: "success",
         isLoading: false,
-        autoClose: 3000
+        autoClose: 3000,
       });
-
+  
       window.location.reload();
     } catch (error) {
       console.error("❌ Erreur lors de la mise à jour du profil :", error);
-
+  
       toast.update(loadingToastId, {
         render: error.response?.data?.message || "Erreur lors de la mise à jour du profil",
         type: "error",
         isLoading: false,
-        autoClose: 5000
+        autoClose: 5000,
       });
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const handlePasswordUpdate = (e) => {
     e.preventDefault();

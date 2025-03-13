@@ -10,14 +10,11 @@ import './Post.scss';
 const DEFAULT_PROFILE_PIC = `${process.env.PUBLIC_URL}/Images/defaultuser.jpg`;
 
 const Post = ({ post }) => {
-  console.log("Post reçu par le composant:", post);
   
-  // Tous les hooks doivent être appelés au début
   const [showComments, setShowComments] = useState(false);
   const [updatedPost, setUpdatedPost] = useState(post);
   const [newComment, setNewComment] = useState(null);
   
-  // Assurer que les données sont correctement structurées
   useEffect(() => {
     if (post) {
       setUpdatedPost(post);
@@ -25,19 +22,12 @@ const Post = ({ post }) => {
   }, [post]);
   
   if (!updatedPost) {
-    console.error("Post non disponible");
+    console.error("❌ Post non disponible");
     return null;
   }
-  
-  // Déterminer la structure correcte pour l'utilisateur et le contenu
+
   const user = updatedPost.user || updatedPost.userId || {};
   const postContent = updatedPost.text || updatedPost.content || '';
-  
-  console.log("Données structurées:", {
-    postId: updatedPost._id,
-    content: postContent,
-    user: user
-  });
   
   const handleCommentClick = () => {
     setShowComments(!showComments);
@@ -93,17 +83,20 @@ const Post = ({ post }) => {
         ) : (
           <p className="post-text post-empty">Ce post ne contient pas de texte</p>
         )}
-        
-        {updatedPost.image && (
-          <img 
-            src={updatedPost.image} 
-            alt="Post"
-            className="post-image" 
-            onError={(e) => {
-              console.error("Erreur de chargement d'image:", e);
-              e.target.style.display = 'none';
-            }}
-          />
+
+        {/* ✅ Affichage de l'image s'il y en a une */}
+        {updatedPost.media && (
+          <div className="post-image-container">
+            <img 
+              src={updatedPost.media} 
+              alt="Média du post"
+              className="post-image" 
+              onError={(e) => {
+                console.error("Erreur de chargement d'image:", e);
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
         )}
       </div>
       
