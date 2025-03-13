@@ -12,7 +12,7 @@ $text-color: #333;
   display: flex;
   flex-direction: column;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-  
+
   /* ✅ Fixe le header et empêche les débordements */
   position: fixed;
   top: 0;
@@ -39,30 +39,134 @@ $text-color: #333;
     align-items: center; // ✅ Assure que le logo est bien centré verticalement
   }
 
+  /* ✅ Barre de recherche */
   .search-bar {
+    position: relative;
     display: flex;
-    align-items: center;
-    background: white;
-    border-radius: 20px;
-    padding: 5px 10px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    width: 50%; // ✅ Ajuste la largeur pour éviter que ça pousse le reste
+    flex-direction: column;
+    width: 50%;
+    max-width: 500px;
 
-    input {
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      padding: 5px;
-      flex: 1;
-      background: transparent;
+    .search-input-container {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 20px;
+      padding: 5px 10px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      
+      input {
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        padding: 5px;
+        flex: 1;
+        background: transparent;
+      }
+
+      .clear-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        color: $accent-color;
+      }
+
+      .search-btn {
+        background: $primary-color;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+          background: darken($primary-color, 10%);
+        }
+      }
     }
 
-    .clear-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      color: $accent-color;
+    /* ✅ Filtres de recherche */
+    .search-filters {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+      align-items: center;
+      font-size: 0.9rem;
+      color: $text-color;
+
+      select, input[type="checkbox"] {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* ✅ Résultats de recherche */
+    .search-results {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      width: 100%;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      display: none;
+      transition: opacity 0.3s ease-in-out;
+
+      &.visible {
+        display: block;
+      }
+
+      .result-section {
+        margin-bottom: 10px;
+
+        h4 {
+          font-size: 14px;
+          font-weight: bold;
+          margin-bottom: 5px;
+          color: $primary-color;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+
+          .result-item {
+            padding: 6px 10px;
+            transition: background 0.3s;
+            
+            &:hover {
+              background: #f1f1f1;
+            }
+          }
+        }
+      }
+
+      .no-results {
+        text-align: center;
+        color: $text-color;
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+
+      .view-all-results {
+        text-align: center;
+        margin-top: 8px;
+        
+        button {
+          background: $primary-color;
+          color: white;
+          padding: 6px 10px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+
+          &:hover {
+            background: darken($primary-color, 10%);
+          }
+        }
+      }
     }
   }
 
@@ -107,7 +211,7 @@ $text-color: #333;
     gap: 20px;
     padding-top: 10px;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
-    width: 100%; // ✅ S'assure qu'il ne dépasse pas sur la droite
+    width: 100%;
 
     .nav-item {
       text-decoration: none;
@@ -151,6 +255,7 @@ $text-color: #333;
   }
 }
 
+/* ✅ Ajustement du body pour éviter que le contenu soit caché sous le header */
 body {
   padding-top: 90px;
   overflow-x: hidden;

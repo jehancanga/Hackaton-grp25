@@ -1,268 +1,372 @@
+// settings.scss
+ 
 .settings-container {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  max-width: 650px;
-  margin: 100px auto 0; // ✅ Ajusté pour éviter que le header fixe ne cache le profil
-  width: 100%;
-  box-sizing: border-box;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  color: #333;
 }
-
-/* ✅ HEADER DU PROFIL */
+ 
+// En-tête du profil
 .profile-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e6ecf0;
-}
-
-.profile-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.profile-image-container {
+  margin-bottom: 30px;
   position: relative;
-  width: 110px;
-  height: 110px;
-}
-
-.profile-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #f0f2f5;
-  border: 3px solid #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  object-fit: cover;
-}
-
-.hidden-input {
-  display: none;
-}
-
-/* ✅ STATISTIQUES */
-.profile-stats {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  padding: 10px 0;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 80px;
-}
-
-.stat-value {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1da1f2;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #657786;
-}
-
-/* ✅ TABS */
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  border-bottom: 1px solid #e6ecf0;
-  padding-bottom: 10px;
-}
-
-.tab-button {
-  padding: 10px 20px;
-  background: none;
-  border: none;
-  font-size: 16px;
-  color: #657786;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &.active {
-    color: #1da1f2;
-    border-bottom: 2px solid #1da1f2;
-  }
-}
-
-/* ✅ FORMULAIRES */
-.settings-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px 0;
-}
-
-.input-field {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #e6ecf0;
-  border-radius: 6px;
-  font-size: 15px;
-  transition: border 0.2s ease;
-  background-color: white;
-  box-sizing: border-box;
-
-  &:focus {
-    border-color: #1da1f2;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.3);
-  }
-}
-
-.bio-field {
-  resize: none;
-  min-height: 100px;
-  font-family: inherit;
-  line-height: 1.5;
-}
-
-/* ✅ BOUTONS */
-.save-button {
-  background-color: #1da1f2;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  padding: 12px 20px;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  width: 100%;
-  margin-top: 10px;
-
-  &:hover {
-    background-color: #1991db;
-  }
-}
-
-/* ✅ CAMÉRA */
-.camera-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-top: 15px;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
-
-  video {
+  
+  .profile-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    max-width: 300px;
-    border-radius: 8px;
-    border: 2px solid #1da1f2;
-  }
-
-  button {
-    background: #ff4757;
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    font-size: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-
-    &:hover {
-      background: #e04040;
+    margin-bottom: 20px;
+    
+    .user-profile-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
   }
-
-  p {
-    font-size: 14px;
-    color: #333;
-  }
 }
-
-/* ✅ RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .settings-container {
-    padding: 16px;
-    border-radius: 6px;
-    margin-top: 100px; // ✅ Ajuste pour header fixe
-  }
-
-  .user-profile-info {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .profile-stats {
-    margin-top: 16px;
+ 
+// Conteneur de l'image de profil
+.profile-image-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 15px;
+  
+  .profile-image {
     width: 100%;
-    justify-content: space-around;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #1da1f2;
+    background-color: #f0f2f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
-
-  .input-field {
-    padding: 10px 12px;
+  
+  .edit-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #1da1f2;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: #0c8ad6;
+      transform: scale(1.1);
+    }
+    
+    .pencil-icon {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
   }
-
-  .camera-section video {
-    max-width: 250px;
+  
+  .hidden-input {
+    display: none;
   }
 }
-
-/* ✅ TOASTIFY (Notifications) */
-.Toastify__toast-container {
-  font-family: 'Arial', sans-serif;
-}
-
-.Toastify__toast--success {
-  background-color: #4caf50;
-}
-
-.Toastify__toast--error {
-  background-color: #f44336;
-}
-
-.Toastify__toast--info {
-  background-color: #2196f3;
-}
-
-.Toastify__toast--warning {
-  background-color: #ff9900;
-}
-
-.Toastify__progress-bar {
-  background: rgba(255, 255, 255, 0.7);
-}
-
-/* ✅ AJUSTEMENT MOBILE */
-@media only screen and (max-width: 480px) {
-  .Toastify__toast-container {
-    width: 100%;
-    padding: 0;
-    left: 0;
+ 
+// Affichage du nom d'utilisateur
+.username-display {
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #14171a;
     margin: 0;
   }
-
-  .tabs {
+}
+ 
+// Statistiques du profil
+.profile-stats {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  width: 100%;
+  
+  .stat-item {
+    display: flex;
     flex-direction: column;
-    gap: 5px;
     align-items: center;
+    margin: 0 15px;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: rgba(29, 161, 242, 0.1);
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1da1f2;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #657786;
+      margin-top: 2px;
+    }
   }
-
+}
+ 
+// Onglets de paramètres
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 20px;
+  
   .tab-button {
-    width: 100%;
-    text-align: center;
+    padding: 12px 20px;
+    font-size: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #657786;
+    transition: all 0.3s;
+    position: relative;
+    
+    &:hover {
+      color: #1da1f2;
+    }
+    
+    &.active {
+      color: #1da1f2;
+      font-weight: 600;
+      
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #1da1f2;
+        border-radius: 3px 3px 0 0;
+      }
+    }
   }
-
-  .profile-header {
+}
+ 
+// Formulaire des paramètres
+.settings-form {
+  .form-group {
+    margin-bottom: 20px;
+    
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #657786;
+      margin-bottom: 8px;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ccd6dd;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background-color: #fff;
+      
+      &:focus {
+        outline: none;
+        border-color: #1da1f2;
+        box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.2);
+      }
+      
+      &::placeholder {
+        color: #aab8c2;
+      }
+      
+      &.bio-field {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+      }
+    }
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+  }
+  
+  .save-button {
+    padding: 12px 24px;
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    
+    &:hover {
+      background-color: #0c8ad6;
+    }
+    
+    &:active {
+      transform: translateY(1px);
+    }
+    
+    &:disabled {
+      background-color: #a0d1f5;
+      cursor: not-allowed;
+    }
+  }
+}
+ 
+// Section de caméra IA
+.camera-section {
+  padding: 20px 0;
+  
+  .camera-toggle-button {
+    padding: 12px 24px;
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 20px;
+    
+    &:hover {
+      background-color: #0c8ad6;
+    }
+  }
+  
+  .camera-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    .camera-preview {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+    }
+    
+    .analyze-button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      
+      &:hover {
+        background-color: #218838;
+      }
+    }
+  }
+  
+  .emotion-result {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
     text-align: center;
+    
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+    
+    .emotion-value {
+      font-weight: 700;
+      color: #1da1f2;
+    }
+  }
+}
+ 
+// Responsive design
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 15px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .profile-header {
+    margin-bottom: 20px;
+  }
+  
+  .profile-image-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .username-display h2 {
+    font-size: 1.5rem;
+  }
+  
+  .profile-stats .stat-item {
+    margin: 0 10px;
+    
+    .stat-value {
+      font-size: 1.2rem;
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+    }
+  }
+  
+  .tabs .tab-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .settings-form {
+    .form-group {
+      .input-field {
+        padding: 10px 12px;
+      }
+    }
+    
+    .button-container {
+      margin-top: 20px;
+    }
+    
+    .save-button {
+      padding: 10px 20px;
+      width: 100%;
+    }
+  }
+  
+  .camera-section {
+    .camera-toggle-button {
+      width: 100%;
+      padding: 10px 15px;
+    }
   }
 }
