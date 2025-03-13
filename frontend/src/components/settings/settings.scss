@@ -1,298 +1,249 @@
 .settings-container {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 24px;
-    max-width: 600px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e6ecf0;
+}
+
+.user-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.profile-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.username-display {
+  h2 {
+    margin: 0;
+    color: #14171a;
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+
+.profile-image-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background-color: #f0f2f5;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Repositionner le bouton d'édition pour qu'il soit à cheval sur la bordure */
+.edit-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #1da1f2;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 3px solid white;
+  z-index: 10; /* S'assurer qu'il est au-dessus */
+  margin-bottom: -3px; /* Ajuster pour être à cheval sur la bordure */
+  margin-right: -3px; /* Ajuster pour être à cheval sur la bordure */
+}
+
+.pencil-icon {
+  fill: white;
+  width: 18px;
+  height: 18px;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px 0;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.stat-value {
+  font-size: 24px; /* Agrandi */
+  font-weight: bold;
+  color: #1da1f2;
+}
+
+.stat-label {
+  font-size: 16px; /* Agrandi */
+  color: #657786;
+  margin-top: 4px;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e6ecf0;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #657786;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button.active {
+  color: #1da1f2;
+  border-bottom: 2px solid #1da1f2;
+}
+
+.settings-form {
+  width: 100%;
+  padding: 8px 0;
+}
+
+.form-group {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e6ecf0;
+  border-radius: 4px;
+  font-size: 15px;
+  transition: border 0.2s ease;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+.input-field:focus {
+  border-color: #1da1f2;
+  outline: none;
+  box-shadow: 0 0 0 1px #1da1f2;
+}
+
+.bio-field {
+  resize: none;
+  min-height: 120px;
+  padding: 12px 16px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.save-button {
+  background-color: #1da1f2;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.save-button:hover {
+  background-color: #1991db;
+}
+
+// Adapter le conteneur et les éléments pour s'assurer qu'ils s'adaptent au carré blanc
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 16px;
+    border-radius: 6px;
   }
   
-  .profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e6ecf0;
-  }
-  
-  .profile-main {
-    display: flex;
-    align-items: center;
-  }
-  
-  .profile-image-container {
-    margin-right: 16px;
-  }
-  
-  .profile-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    background-color: #f0f2f5;
-  }
-  
-  .edit-icon {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background-color: #1da1f2;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .pencil-icon {
-    fill: white;
-    width: 18px;
-    height: 18px;
-  }
-  
-  .hidden-input {
-    display: none;
+  .user-profile-info {
+    flex-direction: column;
+    text-align: center;
   }
   
   .profile-stats {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .stat-value {
-    font-size: 18px;
-    font-weight: bold;
-    color: #1da1f2;
-  }
-  
-  .stat-label {
-    font-size: 14px;
-    color: #657786;
-  }
-  
-  .tabs {
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e6ecf0;
-  }
-  
-  .tab-button {
-    padding: 10px 20px;
-    background: none;
-    border: none;
-    font-size: 16px;
-    color: #657786;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .tab-button.active {
-    color: #1da1f2;
-    border-bottom: 2px solid #1da1f2;
-  }
-  
-  .settings-form {
+    margin-top: 16px;
     width: 100%;
-    padding: 8px 0;
-  }
-  
-  .form-group {
-    margin-bottom: 16px;
-    width: 100%;
+    justify-content: space-around;
   }
   
   .input-field {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #e6ecf0;
-    border-radius: 4px;
-    font-size: 15px;
-    transition: border 0.2s ease;
-    box-sizing: border-box;
-    background-color: white;
+    padding: 10px 12px;
   }
-  
-  .input-field:focus {
-    border-color: #1da1f2;
-    outline: none;
-    box-shadow: 0 0 0 1px #1da1f2;
-  }
-  
-  .bio-field {
-    resize: none;
-    min-height: 120px;
-    padding: 12px 16px;
-    font-family: inherit;
-    line-height: 1.5;
-  }
-  
-  .save-button {
-    background-color: #1da1f2;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 12px 20px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    width: 100%;
-    margin-top: 8px;
-  }
-  
-  .save-button:hover {
-    background-color: #1991db;
-  }
-  
-  // Adapter le conteneur et les éléments pour s'assurer qu'ils s'adaptent au carré blanc
-  @media (max-width: 768px) {
-    .settings-container {
-      padding: 16px;
-      border-radius: 6px;
-    }
-    
-    .profile-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .profile-stats {
-      margin-top: 16px;
-      width: 100%;
-      justify-content: space-around;
-    }
-    
-    .input-field {
-      padding: 10px 12px;
-    }
-  }
+}
 
-  // Styles personnalisés pour React-Toastify
+// Styles personnalisés pour React-Toastify
 .Toastify__toast-container {
-    font-family: 'Arial', sans-serif; // Utilisez la police de votre application
-  }
-  
-  .Toastify__toast--success {
-    background-color: #4caf50;
-  }
-  
-  .Toastify__toast--error {
-    background-color: #f44336;
-  }
-  
-  .Toastify__toast--info {
-    background-color: #2196f3;
-  }
-  
-  .Toastify__toast--warning {
-    background-color: #ff9900;
-  }
-  
-  .Toastify__progress-bar {
-    background: rgba(255, 255, 255, 0.7);
-  }
-  
-  // Styles pour une meilleure adaptation mobile
-  @media only screen and (max-width: 480px) {
-    .Toastify__toast-container {
-      width: 100%;
-      padding: 0;
-      left: 0;
-      margin: 0;
-    }
-  }
-  
+  font-family: 'Arial', sans-serif;
+}
 
-.profile-stats {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    padding: 10px 0;
-    text-align: center;
-    
-    .stat-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      
-      .stat-value {
-        font-weight: bold;
-        font-size: 18px;
-        color: #1da1f2;
-      }
-      
-      .stat-label {
-        font-size: 14px;
-        color: #657786;
-        margin-top: 2px;
-      }
-    }
+.Toastify__toast--success {
+  background-color: #4caf50;
+}
+
+.Toastify__toast--error {
+  background-color: #f44336;
+}
+
+.Toastify__toast--info {
+  background-color: #2196f3;
+}
+
+.Toastify__toast--warning {
+  background-color: #ff9900;
+}
+
+.Toastify__progress-bar {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+// Styles pour une meilleure adaptation mobile
+@media only screen and (max-width: 480px) {
+  .Toastify__toast-container {
+    width: 100%;
+    padding: 0;
+    left: 0;
+    margin: 0;
   }
-  
-  .profile-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    border-bottom: 1px solid #e6ecf0;
-    
-    .profile-main {
-      text-align: center;
-      width: 100%;
-      
-      .profile-image-container {
-        position: relative;
-        display: inline-block;
-        
-        .profile-image {
-          width: 100px;
-          height: 100px;
-          border-radius: 50%;
-          overflow: hidden;
-          position: relative;
-          margin: 0 auto;
-          border: 3px solid #fff;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        
-        .edit-icon {
-          position: absolute;
-          bottom: 5px;
-          right: 5px;
-          background-color: #1da1f2;
-          border-radius: 50%;
-          padding: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          
-          .pencil-icon {
-            width: 16px;
-            height: 16px;
-            fill: #fff;
-          }
-        }
-        
-        .hidden-input {
-          display: none;
-        }
-      }
-    }
-  }
-  
+}

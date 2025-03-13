@@ -13,15 +13,16 @@ const ProfileSettings = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
-  const [followers, setFollowers] = useState(0); // Initialiser à 0 au lieu de null
-  const [following, setFollowing] = useState(0); // Initialiser à 0 au lieu de null
-  const [tweets, setTweets] = useState(0); // Initialiser à 0 au lieu de null
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0); 
+  const [tweets, setTweets] = useState(0);
   const [profileImage, setProfileImage] = useState("");
   const [profileImageFile, setProfileImageFile] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentUsername, setCurrentUsername] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -29,7 +30,9 @@ const ProfileSettings = () => {
       try {
         const user = getCurrentUser();
         if (user) {
-          setUsername(user.username || "");
+          const usernameValue = user.username || "";
+          setUsername(usernameValue);
+          setCurrentUsername(usernameValue);
           setBio(user.bio || "");
           
           // Récupération des compteurs, en s'assurant qu'ils ne sont jamais null ou undefined
@@ -82,11 +85,11 @@ const ProfileSettings = () => {
   
       const reader = new FileReader();
       reader.onload = (event) => {
-        const base64String = event.target.result; // 🔥 Convertit l'image en Base64
+        const base64String = event.target.result;
         setProfileImage(base64String);
       };
       
-      reader.readAsDataURL(file); // 🔥 Convertit le fichier en Base64
+      reader.readAsDataURL(file);
   
       toast.info("Image sélectionnée. N'oubliez pas de sauvegarder pour l'appliquer.", {
         autoClose: 3000,
@@ -94,6 +97,9 @@ const ProfileSettings = () => {
     }
   };
   
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
@@ -107,11 +113,11 @@ const ProfileSettings = () => {
     setIsLoading(true);
   
     try {
-      // 🔥 Construire l'objet JSON avec l'image en Base64
+      // Construire l'objet JSON avec l'image en Base64
       const data = {
         username: username.trim(),
         bio: bio.trim(),
-        profilePic: profileImage, // 🔥 Image en Base64
+        profilePic: profileImage,
       };
   
       console.log("📤 Données envoyées en JSON :", data);
@@ -130,7 +136,13 @@ const ProfileSettings = () => {
         };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       }
+
+      // Mettre à jour le nom d'utilisateur affiché
+      setCurrentUsername(username);
   
+      // Rechargement de la page après une sauvegarde réussie
+      window.location.reload();
+
       toast.update(loadingToastId, {
         render: "Profil mis à jour avec succès ! ✅",
         type: "success",
@@ -138,7 +150,7 @@ const ProfileSettings = () => {
         autoClose: 3000,
       });
   
-      window.location.reload();
+
     } catch (error) {
       console.error("❌ Erreur lors de la mise à jour du profil :", error);
   
@@ -153,7 +165,6 @@ const ProfileSettings = () => {
     }
   };
   
-
   const handlePasswordUpdate = (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
@@ -170,18 +181,21 @@ const ProfileSettings = () => {
     <div className="settings-container">
       <div className="profile-header">
         <div className="profile-main">
-          <div className="profile-image-container">
-            <div className="profile-image">
-              <img 
-                src={profileImage} 
-                alt="Profile" 
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '50%'
-                }}
-              />
+          <div className="user-profile-info">
+            <div className="profile-image-container">
+              <div className="profile-image">
+                <img 
+                  src={profileImage} 
+                  alt="Profile" 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%'
+                  }}
+                />
+                {/* Le bouton d'édition est maintenant placé avec un z-index plus élevé */}
+              </div>
               <label htmlFor="profile-pic" className="edit-icon">
                 <svg viewBox="0 0 24 24" className="pencil-icon">
                   <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
@@ -189,10 +203,12 @@ const ProfileSettings = () => {
               </label>
               <input type="file" id="profile-pic" className="hidden-input" onChange={handleImageChange} accept="image/*" />
             </div>
+            <div className="username-display">
+              <h2>{currentUsername || "Utilisateur"}</h2>
+            </div>
           </div>
         </div>
 
-        {/* Section des stats modifiée pour garantir zéro en cas d'absence de valeur */}
         <div className="profile-stats">
           <div className="stat-item">
             <span className="stat-value">{tweets}</span>
@@ -219,12 +235,24 @@ const ProfileSettings = () => {
       </div>
 
       {activeTab === 0 && (
-        <form className="settings-form" onSubmit={handleProfileUpdate} encType="multipart/form-data">
+        <form className="settings-form" onSubmit={handleProfileUpdate}>
           <div className="form-group">
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Nom d'utilisateur" className="input-field" />
+            <input 
+              type="text" 
+              value={username} 
+              onChange={handleUsernameChange} 
+              placeholder="Nom d'utilisateur" 
+              className="input-field" 
+            />
           </div>
           <div className="form-group">
-            <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Ma bio" className="input-field bio-field" rows={4} />
+            <textarea 
+              value={bio} 
+              onChange={(e) => setBio(e.target.value)} 
+              placeholder="Ma bio" 
+              className="input-field bio-field" 
+              rows={4} 
+            />
           </div>
           <button type="submit" className="save-button" disabled={isLoading}>
             {isLoading ? "Sauvegarde en cours..." : "Sauvegarder"}
