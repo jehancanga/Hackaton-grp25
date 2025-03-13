@@ -7,10 +7,10 @@ import io
 import base64
 import os
 import traceback
-from models import EmotionCNN  # Importez votre classe de modèle
+from models import EmotionCNN
 
 app = Flask(__name__)
-CORS(app)  # Important pour permettre les requêtes depuis le frontend
+CORS(app)
 
 # Définir les émotions (assurez-vous que l'ordre correspond à votre modèle)
 emotions = ["neutral", "happy", "sad", "surprise", "fear", "disgust", "angry"]
@@ -43,7 +43,7 @@ def load_model(path):
         print(f"Erreur de chargement du modèle : {e}")
         raise
 
-# Charger le modèle
+# Load model
 model = load_model(model_path)
 model.eval()  # Mettre le modèle en mode évaluation
 
