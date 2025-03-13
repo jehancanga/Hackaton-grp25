@@ -1,5 +1,5 @@
 version: "3.8"
-
+ 
 services:
   frontend:
     build: ./frontend
@@ -14,7 +14,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
     networks:
       - app-network
-
+ 
   backend:
     build: ./backend
     ports:
@@ -25,8 +25,8 @@ services:
       - NODE_ENV=development
       - MONGO_URI=mongodb://mongodb:27017/biblio
     networks:
-      - app-network
-
+      - app-network  
+ 
   mongodb:
     image: mongo
     container_name: mongodb
@@ -37,10 +37,10 @@ services:
       - mongo-data:/data/db
     networks:
       - app-network
-
+ 
 volumes:
   mongo-data:
-
+ 
 networks:
   app-network:
     driver: bridge

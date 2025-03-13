@@ -68,39 +68,39 @@ const ProfileSettings = () => {
           });
           console.log("✅ Utilisateur récupéré:", user);
           setCurrentUser(user);
-          
+
           // S'assurer que l'ID utilisateur est bien défini
           const userIdValue = user._id || user.id || "";
           console.log("👤 ID utilisateur:", userIdValue);
-          
+
           if (!userIdValue) {
             console.warn("⚠️ ID utilisateur manquant dans les données utilisateur");
           }
-          
+
           setUserId(userIdValue);
-          
+
           const usernameValue = user.username || "";
           setUsername(usernameValue);
           setCurrentUsername(usernameValue);
           setBio(user.bio || "");
-          
+
           // Récupération des compteurs, en s'assurant qu'ils ne sont jamais null ou undefined
           const followersCount = Array.isArray(user.followers)
             ? user.followers.length
             : (typeof user.followers === 'number' ? user.followers : 0);
-            
+
           const followingCount = Array.isArray(user.following)
             ? user.following.length
             : (typeof user.following === 'number' ? user.following : 0);
-            
+
           const tweetsCount = Array.isArray(user.tweets)
             ? user.tweets.length
             : (typeof user.tweets === 'number' ? user.tweets : 0);
-          
+
           setFollowers(followersCount);
           setFollowing(followingCount);
           setTweets(tweetsCount);
-          
+
           setProfileImage(user.profilePic || "https://via.placeholder.com/150");
         } else {
           toast.info("Veuillez vous connecter pour voir votre profil");
@@ -121,7 +121,7 @@ const ProfileSettings = () => {
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
-      
+
       // Preview image
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -136,36 +136,35 @@ const ProfileSettings = () => {
     if (!cameraActive) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
- 
-        if (stream && videoRef.current) {
+
+        if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          streamRef.current = stream;
-          setCameraActive(true);
-          toast.dismiss();
-          toast.success("Caméra activée avec succès !");
-        } else {
-          throw new Error("Flux vidéo introuvable");
         }
+
+        streamRef.current = stream; // Stocker le flux
+        setCameraActive(true);
+        toast.success("Caméra activée !");
+
       } catch (error) {
         console.error("🚨 Erreur lors de l'activation de la caméra :", error);
-        if (error.name === "NotAllowedError") {
-          toast.error("Accès à la caméra refusé. Vérifiez les permissions.");
-        }
+        toast.error("Erreur lors de l'activation de la caméra. Vérifiez les permissions.");
       }
     } else {
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current.getTracks().forEach(track => track.stop()); // Arrêter chaque track vidéo
         streamRef.current = null;
       }
+
       if (videoRef.current) {
-        videoRef.current.srcObject = null;
+        videoRef.current.srcObject = null; // Supprimer la référence vidéo
       }
+
       setCameraActive(false);
-      toast.dismiss();
       toast.info("Caméra désactivée.");
     }
   };
- 
+
+
   // 🎭 Détection d'émotion via la caméra
   const sendImageToEmotionAI = async () => {
     if (!videoRef.current) return;
@@ -199,7 +198,7 @@ const ProfileSettings = () => {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     const loadingToastId = toast.loading("Mise à jour du profil en cours...");
  
     try {
@@ -208,9 +207,9 @@ const ProfileSettings = () => {
         bio: bio.trim(),
         profilePic: profileImage,
       };
-  
+
       const result = await updateUserProfile(data);
-  
+
       const currentUser = getCurrentUser();
       if (currentUser) {
         const updatedUser = {
@@ -221,16 +220,16 @@ const ProfileSettings = () => {
         };
         localStorage.setItem("user", JSON.stringify(updatedUser));
       }
- 
+
       setCurrentUsername(username);
-  
+
       toast.update(loadingToastId, {
         render: "Profil mis à jour avec succès ! ✅",
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
-  
+
       window.location.reload();
  
     } catch (error) {
@@ -263,33 +262,33 @@ const ProfileSettings = () => {
       toast.error("Vous devez être connecté pour voir vos abonnés");
       return;
     }
-    
+
     if (!userId) {
       console.error("❌ Impossible d'ouvrir le modal: ID utilisateur manquant");
       toast.error("Une erreur est survenue. Veuillez rafraîchir la page.");
       return;
     }
-    
+
     setFollowModalType('followers');
     setFollowModalVisible(true);
   };
-  
+
   const handleOpenFollowingModal = () => {
     if (!isAuthenticated()) {
       toast.error("Vous devez être connecté pour voir vos abonnements");
       return;
     }
-    
+
     if (!userId) {
       console.error("❌ Impossible d'ouvrir le modal: ID utilisateur manquant");
       toast.error("Une erreur est survenue. Veuillez rafraîchir la page.");
       return;
     }
-    
+
     setFollowModalType('following');
     setFollowModalVisible(true);
   };
-  
+
   return (
     <div className="settings-container">
       <div className="profile-header">
@@ -320,7 +319,7 @@ const ProfileSettings = () => {
             </div>
           </div>
         </div>
-  
+
         <div className="profile-stats">
           <div className="stat-item">
             <span className="stat-value">{tweets}</span>
@@ -336,13 +335,13 @@ const ProfileSettings = () => {
           </div>
         </div>
       </div>
-  
+
       <div className="tabs">
         <button className={`tab-button ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}>Profil</button>
         <button className={`tab-button ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}>Sécurité</button>
         <button className={`tab-button ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}>Caméra IA</button>
       </div>
-  
+
       {activeTab === 0 && (
         <form className="settings-form" onSubmit={handleProfileUpdate}>
           <div className="form-group">
@@ -374,7 +373,7 @@ const ProfileSettings = () => {
           </div>
         </form>
       )}
-  
+
       {activeTab === 1 && (
         <form className="settings-form" onSubmit={handlePasswordUpdate}>
           <div className="form-group">
@@ -436,7 +435,7 @@ const ProfileSettings = () => {
           </div>
         </div>
       )}
-  
+
       {userId && followModalVisible && (
         <FollowersModal
           userId={userId}
