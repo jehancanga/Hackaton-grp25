@@ -13,7 +13,17 @@ services:
     networks:
       - app-network
 
+  bot:
+    container_name: bot
+    build: ./bot
+    volumes:
+      - ./bot:/app
+    ports:
+      - "5000:5000"
+    command: python app.py
+
   backend:
+    container_name: node
     build: ./backend
     ports:
       - "3000:3000"
@@ -30,6 +40,7 @@ services:
       - app-network
 
   frontend:
+    container_name: react
     build:
       context: ./frontend
       dockerfile: Dockerfile

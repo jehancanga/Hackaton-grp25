@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from "./components/Header/Header";
 import Feed from "./components/Feed/Feed";
+import EmotionFeed from "./components/EmotionFeed/EmotionFeed";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import NewPost from "./components/NewPost/NewPost";
@@ -26,11 +27,9 @@ function App() {
       <div className="App">
         <Header />
         
-        {/* Webcam affichée uniquement sur la page d'accueil */}
         <Routes>
           <Route path="/" element={
             <>
-              {/* La webcam est maintenant indépendante du layout */}
               <EmotionDetector onEmotionDetected={handleEmotionDetected} />
               
               {/* Main content */}
@@ -40,6 +39,17 @@ function App() {
               </div>
             </>
           } />
+          
+          {/* Nouvelle route pour EmotionFeed */}
+          <Route path="/emotions" element={
+            <>
+              <EmotionDetector onEmotionDetected={handleEmotionDetected} />
+              <div className="main-container">
+                <EmotionFeed initialEmotion={detectedEmotion} />
+              </div>
+            </>
+          } />
+          
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/newpost" element={
