@@ -1,13 +1,14 @@
-// src/services/apiPosts.js
 import axios from "axios";
 import { API_URL, getAuthHeaders } from "./api";
-
 
 const POSTS_URL = `${API_URL}/tweets`;
 
 // 📝 **Créer un tweet**
 export const createTweet = async (tweetData) => {
   try {
+    // tweetData peut maintenant contenir detectedEmotion
+    console.log("📤 Envoi du tweet avec émotion:", tweetData);
+    
     const response = await axios.post(POSTS_URL, tweetData, getAuthHeaders());
     return response.data;
   } catch (error) {
@@ -50,6 +51,7 @@ export const deleteTweet = async (tweetId) => {
   }
 };
 
+// 📌 **Obtenir les tweets**
 export const fetchPosts = async () => {
   try {
     const response = await fetch(`${API_URL}/posts`);
@@ -61,36 +63,39 @@ export const fetchPosts = async () => {
   }
 };
 
-// like sur un tweet**
-export const likeTweet = async (tweetId) => {
+// 🔄 **Annuler un retweet**
+export const unretweet = async (tweetId) => {
   try {
-      const response = await axios.post(
-          `${POSTS_URL}/${tweetId}/like`, 
-          {}, 
-          getAuthHeaders()
-      );
-      return response.data;
+    const response = await axios.delete(`${POSTS_URL}/${tweetId}/retweet`, getAuthHeaders());
+    return response.data;
   } catch (error) {
-      console.error('Error liking tweet:', error);
-      throw error;
+    console.error("Erreur unretweet :", error.response?.data);
+    return null;
   }
 };
 
-// 💔 **Annuler un like sur un tweet**
-export const unlikeTweet = async (tweetId) => {
+// 📌 **Obtenir des tweets recommandés**
+export const getRecommendedTweets = async (emotion) => {
   try {
-      const response = await axios.post(
-          `${POSTS_URL}/${tweetId}/like`, 
-          {}, 
-          getAuthHeaders()
-      );
-      return response.data;
+    const response = await axios.get(`${POSTS_URL}/recommendations/${emotion}`, getAuthHeaders());
+    console.log(`📊 Tweets recommandés pour l'émotion ${emotion}:`, response.data);
+    return response.data;
   } catch (error) {
-      console.error('Error unliking tweet:', error);
-      throw error;
+    console.error(`❌ Erreur récupération recommandations pour ${emotion}:`, error.response?.data);
+    return null;
   }
 };
 
+// 📌 **Obtenir les tweets par catégorie**
+export const getTweetsByCategory = async (category) => {
+  try {
+    const response = await axios.get(`${POSTS_URL}/category/${category}`);
+    return response.data;
+  } catch (error) {
+    console.error(`❌ Erreur récupération tweets catégorie ${category}:`, error.response?.data);
+    return null;
+  }
+};
 
 // 💬 **Commenter un tweet**
 export const commentTweet = async (tweetId, commentData) => {
@@ -114,6 +119,7 @@ export const getTweetComments = async (tweetId) => {
   }
 };
 
+// ❤️ **Liker un commentaire**
 export const likeComment = async (commentId) => {
   try {
     const response = await axios.post(`${API_URL}/comments/${commentId}/like`, {}, getAuthHeaders());

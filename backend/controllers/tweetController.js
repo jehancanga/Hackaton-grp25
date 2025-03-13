@@ -1,14 +1,85 @@
 import Tweet from "../models/Tweet.js";
+import { categorizeTweet, extractHashtags } from "../services/categoryService.js";
 
-// 📝 Créer un tweet
+// 📝 Créer un tweet 
 export const createTweet = async (req, res) => {
-    try {
-        const { content, media } = req.body;
-        const tweet = await Tweet.create({ userId: req.user.id, content, media });
-        res.status(201).json(tweet);
-    } catch (error) {
-        res.status(500).json({ message: "Erreur serveur" });
+  try {
+    const { content, media, detectedEmotion } = req.body;
+    
+    // Extraire les hashtags du contenu
+    const hashtags = extractHashtags(content);
+    
+    // Déterminer la catégorie du tweet
+    const category = categorizeTweet(content, hashtags);
+    
+    const tweet = await Tweet.create({ 
+      userId: req.user.id, 
+      content, 
+      media, 
+      hashtags,
+      category,
+      detectedEmotion: detectedEmotion || "neutral"
+    });
+    
+    res.status(201).json(tweet);
+  } catch (error) {
+    console.error("Erreur lors de la création du tweet:", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// Route pour obtenir les tweets par catégorie
+export const getTweetsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const tweets = await Tweet.find({ category })
+      .populate("userId", "username profilePic")
+      .sort({ createdAt: -1 });
+    
+    if (!tweets.length) {
+      return res.status(404).json({ message: "Aucun tweet trouvé dans cette catégorie" });
     }
+    
+    res.json(tweets);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// Route pour obtenir des recommandations
+export const getRecommendedTweetsByEmotion = async (req, res) => {
+  try {
+    const { emotion } = req.params;
+    const limit = parseInt(req.query.limit) || 10;
+    
+    const tweets = await getRecommendedTweets(emotion, limit);
+    
+    if (!tweets.length) {
+      return res.status(404).json({ message: "Aucune recommandation trouvée" });
+    }
+    
+    res.json(tweets);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// Route pour obtenir les tweets par émotion
+export const getTweetsByEmotion = async (req, res) => {
+  try {
+    const { emotion } = req.params;
+    const tweets = await Tweet.find({ detectedEmotion: emotion })
+      .populate("userId", "username profilePic")
+      .sort({ createdAt: -1 });
+    
+    if (!tweets.length) {
+      return res.status(404).json({ message: "Aucun tweet trouvé avec cette émotion" });
+    }
+    
+    res.json(tweets);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 };
 
 // 📌 Obtenir tous les tweets

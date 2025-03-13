@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+// Update the tweet schema to include category and detectedEmotion fields
+
 const tweetSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -9,8 +11,12 @@ const tweetSchema = new mongoose.Schema(
     retweets: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     hashtags: [{ type: String }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
-    category: { type: String, default: "Uncategorized" }, // Ajout du champ catégorie
-    detectedEmotion: { type: String, default: "neutral" } // Ajout du champ émotion
+    category: { type: String, enum: [
+      "Technology", "Science", "Sports", "Entertainment", "Politics", 
+      "Health", "Education", "Business", "Travel", "Food", 
+      "Fashion", "Music", "Art", "Gaming", "Environment", "Uncategorized"
+    ], default: "Uncategorized" },
+    detectedEmotion: { type: String, enum: ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"], default: "neutral" }
   },
   { timestamps: true }
 );
