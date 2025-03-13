@@ -14,6 +14,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const app = express();
 
 // Créer un dossier 'uploads' pour stocker les images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -21,7 +22,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 dotenv.config();
 connectDB();
 
-const app = express();
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");

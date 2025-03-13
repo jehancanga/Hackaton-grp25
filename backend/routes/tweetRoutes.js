@@ -3,7 +3,7 @@ import {
   createTweet, 
   getTweets, 
   likeTweet, 
-  retweet, 
+  retweetTweet, 
   deleteTweet, 
   getUserTweets,
   getTweetsByCategory,

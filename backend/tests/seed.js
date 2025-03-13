@@ -2,8 +2,8 @@
 // Script pour initialiser la base de données avec 25 utilisateurs et 100 tweets
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import User from './models/User.js';
-import Tweet from './models/Tweet.js';
+import User from '../models/User.js';
+import Tweet from '../models/Tweet.js';
 import dotenv from 'dotenv';
 
 dotenv.config();

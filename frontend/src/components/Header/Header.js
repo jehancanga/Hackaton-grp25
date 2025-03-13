@@ -45,7 +45,7 @@ const Header = () => {
     return () => {
       cleanup(); // Nettoyage propre lors du démontage du composant
     };
-  }, []);
+  },[] );
 
   // Fonction de déconnexion
   const handleLogout = () => {

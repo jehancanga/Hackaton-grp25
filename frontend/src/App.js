@@ -12,6 +12,7 @@ import Settings from "./components/settings/settings";
 import ProfilUser from "./components/profilUser/profilUser";
 import EmotionDetector from "./components/EmotionDetector/EmotionDetector";
 import RecommendedFeed from "./components/RecommendedFeed/RecommendedFeed";
+import './App.css';
 
 function App() {
   const [detectedEmotion, setDetectedEmotion] = useState(null);
@@ -25,12 +26,18 @@ function App() {
       <div className="App">
         <Header />
         
+        {/* Webcam affichée uniquement sur la page d'accueil */}
         <Routes>
           <Route path="/" element={
             <>
+              {/* La webcam est maintenant indépendante du layout */}
               <EmotionDetector onEmotionDetected={handleEmotionDetected} />
-              {detectedEmotion && <RecommendedFeed emotion={detectedEmotion} />}
-              <Feed />
+              
+              {/* Main content */}
+              <div className="main-container">
+                {detectedEmotion && <RecommendedFeed emotion={detectedEmotion} />}
+                <Feed />
+              </div>
             </>
           } />
           <Route path="/login" element={<Login />} />
