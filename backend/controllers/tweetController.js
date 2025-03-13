@@ -4,24 +4,48 @@ import { categorizeTweet, extractHashtags } from "../services/categoryService.js
 // 📝 Créer un tweet 
 export const createTweet = async (req, res) => {
   try {
-    const { content, media, detectedEmotion } = req.body;
-    
-    // Extraire les hashtags du contenu
+    const { content, media } = req.body;
+    const userId = req.user._id;
+
+    // Extraire les hashtags
     const hashtags = extractHashtags(content);
     
-    // Déterminer la catégorie du tweet
+    // Déterminer la catégorie
     const category = categorizeTweet(content, hashtags);
-    
-    const tweet = await Tweet.create({ 
-      userId: req.user.id, 
-      content, 
-      media, 
+
+    const newTweet = new Tweet({
+      userId,
+      content,
+      media,
       hashtags,
       category,
-      detectedEmotion: detectedEmotion || "neutral"
+      detectedEmotion: "neutral" // Valeur par défaut
     });
+
+    // Si le tweet contient une image, essayez de détecter l'émotion
+    if (media && media.trim() !== "") {
+      try {
+        // Essayer d'analyser l'émotion via le service Flask
+        const flaskResponse = await axios.post('http://localhost:5000/detect-emotion', {
+          image: media
+        });
+        
+        if (flaskResponse.data && flaskResponse.data.emotion) {
+          newTweet.detectedEmotion = flaskResponse.data.emotion;
+        }
+      } catch (emotionError) {
+        console.warn("Impossible d'analyser l'émotion de l'image:", emotionError.message);
+        // Continuer avec la valeur par défaut "neutral"
+      }
+    }
+
+    const savedTweet = await newTweet.save();
     
-    res.status(201).json(tweet);
+    // Populer les informations de l'utilisateur pour le retour
+    const populatedTweet = await Tweet.findById(savedTweet._id)
+      .populate("userId", "username profilePic");
+
+    res.status(201).json(populatedTweet);
   } catch (error) {
     console.error("Erreur lors de la création du tweet:", error);
     res.status(500).json({ message: "Erreur serveur" });
@@ -38,42 +62,6 @@ export const getTweetsByCategory = async (req, res) => {
     
     if (!tweets.length) {
       return res.status(404).json({ message: "Aucun tweet trouvé dans cette catégorie" });
-    }
-    
-    res.json(tweets);
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-};
-
-// Route pour obtenir des recommandations
-export const getRecommendedTweetsByEmotion = async (req, res) => {
-  try {
-    const { emotion } = req.params;
-    const limit = parseInt(req.query.limit) || 10;
-    
-    const tweets = await getRecommendedTweets(emotion, limit);
-    
-    if (!tweets.length) {
-      return res.status(404).json({ message: "Aucune recommandation trouvée" });
-    }
-    
-    res.json(tweets);
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-};
-
-// Route pour obtenir les tweets par émotion
-export const getTweetsByEmotion = async (req, res) => {
-  try {
-    const { emotion } = req.params;
-    const tweets = await Tweet.find({ detectedEmotion: emotion })
-      .populate("userId", "username profilePic")
-      .sort({ createdAt: -1 });
-    
-    if (!tweets.length) {
-      return res.status(404).json({ message: "Aucun tweet trouvé avec cette émotion" });
     }
     
     res.json(tweets);
@@ -243,4 +231,49 @@ export const retweetTweet = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
   };
+
+// Fonction pour récupérer les tweets par émotion
+export const getTweetsByEmotion = async (req, res) => {
+  try {
+    const { emotion } = req.params;
+    
+    // Vérifier si l'émotion est valide
+    const validEmotions = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"];
+    if (!validEmotions.includes(emotion)) {
+      return res.status(400).json({ message: "Émotion non valide" });
+    }
+    
+    // Récupérer les tweets avec cette émotion
+    const tweets = await Tweet.find({ detectedEmotion: emotion })
+      .populate("userId", "username profilePic")
+      .sort({ createdAt: -1 });
+    
+    res.status(200).json(tweets);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des tweets par émotion:", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// Fonction pour récupérer les tweets recommandés par émotion
+export const getRecommendedTweetsByEmotion = async (req, res) => {
+  try {
+    const { emotion } = req.params;
+    const userId = req.user._id;
+    
+    // Vérifier si l'émotion est valide
+    const validEmotions = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"];
+    if (!validEmotions.includes(emotion)) {
+      return res.status(400).json({ message: "Émotion non valide" });
+    }
+    
+    // Obtenir les recommandations
+    const recommendedTweets = await getRecommendedTweets(emotion);
+    
+    res.status(200).json(recommendedTweets);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des tweets recommandés:", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
   

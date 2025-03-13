@@ -8,14 +8,27 @@ const Header = () => {
   const navigate = useNavigate();
   
   const DEFAULT_PROFILE_PIC = `${process.env.PUBLIC_URL}/Images/defaultuser.jpg`;
+  const DEFAULT_LOGO = `${process.env.PUBLIC_URL}/logo.jpg`; // Chemin par défaut
 
   useEffect(() => {
+    // Débogage : Vérification du stockage local
+    const localStorageUser = localStorage.getItem('user');
+    console.log("Contenu de localStorage 'user':", localStorageUser);
+
     const currentUser = getCurrentUser();
-    console.log("Utilisateur récupéré :", currentUser);
+    console.log("🔍 Utilisateur récupéré (détaillé):", JSON.stringify(currentUser, null, 2));
+    
     if (currentUser) {
-      console.log("Photo de profil de l'utilisateur :", currentUser.profilePic);
+      console.log("✅ Détails utilisateur :", {
+        username: currentUser.username,
+        email: currentUser.email,
+        profilePic: currentUser.profilePic
+      });
+      setUser(currentUser);
+    } else {
+      console.log("❌ Aucun utilisateur connecté");
+      setUser(null);
     }
-    setUser(currentUser);
 
     const startAutoLogout = () => {
       let timeout;
@@ -58,11 +71,20 @@ const Header = () => {
     <nav className="header">
       <div className="header-top">
         {/* Logo */}
-        <div className="logo">J-IPSSI.</div>
+        {/* <div className="logo">
+          <img 
+            src={`${process.env.PUBLIC_URL}/Images/logo.jpg`} 
+            alt="EmoTweet" 
+            onError={(e) => {
+              console.error("❌ Erreur de chargement du logo principal");
+              e.target.src = DEFAULT_LOGO; // Logo de secours
+            }}
+          />
+        </div> */}
 
         {/* Barre de recherche */}
         <div className="search-bar">
-          <input type="text" placeholder="Search..." />
+          <input type="text" placeholder="Rechercher..." />
           <button className="clear-btn">✖</button>
         </div>
 
@@ -82,24 +104,30 @@ const Header = () => {
               <span className="username">{user.username}</span>
             </Link>
             <button className="logout-btn" onClick={handleLogout}>
-              Disconnect
+              Déconnexion
             </button>
-            {console.log("Image utilisée :", user.profilePic || DEFAULT_PROFILE_PIC)}
           </div>
         )}
       </div>
 
       {/* Navigation centrée avec authentification */}
       <div className="nav-links">
-        <Link to="/" className="nav-item">My Feed</Link>
-        {user && <Link to="/myposts" className="nav-item">My Posts</Link>}
-        {user && <Link to="/newpost" className="nav-item">New Post</Link>}  {/* ✅ Ajout du lien "New Post" */}
+        {/* Log pour déboguer l'état de l'utilisateur */}
+        {console.log("🔍 État actuel de l'utilisateur:", user)}
 
-        {/* Authentification */}
-        {!user && (
+        <Link to="/" className="nav-item">Mon Flux</Link>
+        
+        {/* Liens conditionnels */}
+        {user ? (
+          <>
+            <Link to="/emotions" className="nav-item">Émotions</Link>
+            <Link to="/myposts" className="nav-item">Mes Publications</Link>
+            <Link to="/newpost" className="nav-item">Nouvelle Publication</Link>
+          </>
+        ) : (
           <>
             <Link to="/login" className="nav-item login-btn">Connexion</Link>
-            <Link to="/register" className="nav-item register-btn">New Account</Link>
+            <Link to="/register" className="nav-item register-btn">Nouveau Compte</Link>
           </>
         )}
       </div>

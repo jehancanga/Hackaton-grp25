@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from "./components/Header/Header";
 import Feed from "./components/Feed/Feed";
+import EmotionFeed from "./components/EmotionFeed/EmotionFeed";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import NewPost from "./components/NewPost/NewPost";
@@ -12,6 +13,7 @@ import Settings from "./components/settings/settings";
 import ProfilUser from "./components/profilUser/profilUser";
 import EmotionDetector from "./components/EmotionDetector/EmotionDetector";
 import RecommendedFeed from "./components/RecommendedFeed/RecommendedFeed";
+import './App.css';
 
 function App() {
   const [detectedEmotion, setDetectedEmotion] = useState(null);
@@ -29,10 +31,25 @@ function App() {
           <Route path="/" element={
             <>
               <EmotionDetector onEmotionDetected={handleEmotionDetected} />
-              {detectedEmotion && <RecommendedFeed emotion={detectedEmotion} />}
-              <Feed />
+              
+              {/* Main content */}
+              <div className="main-container">
+                {detectedEmotion && <RecommendedFeed emotion={detectedEmotion} />}
+                <Feed />
+              </div>
             </>
           } />
+          
+          {/* Nouvelle route pour EmotionFeed */}
+          <Route path="/emotions" element={
+            <>
+              <EmotionDetector onEmotionDetected={handleEmotionDetected} />
+              <div className="main-container">
+                <EmotionFeed initialEmotion={detectedEmotion} />
+              </div>
+            </>
+          } />
+          
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/newpost" element={

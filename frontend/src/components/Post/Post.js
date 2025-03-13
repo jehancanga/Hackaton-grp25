@@ -10,7 +10,6 @@ import './Post.scss';
 const DEFAULT_PROFILE_PIC = `${process.env.PUBLIC_URL}/Images/defaultuser.jpg`;
 
 const Post = ({ post }) => {
-  
   const [showComments, setShowComments] = useState(false);
   const [updatedPost, setUpdatedPost] = useState(post);
   const [newComment, setNewComment] = useState(null);
@@ -47,13 +46,25 @@ const Post = ({ post }) => {
   
   const formatDate = (dateString) => {
     try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: fr });
+      // Vérification et normalisation de la date
+      const date = typeof dateString === 'string' 
+        ? new Date(dateString) 
+        : dateString instanceof Date 
+        ? dateString 
+        : new Date();
+      
+      // Vérification de la validité de la date
+      if (isNaN(date.getTime())) {
+        console.error("Date invalide:", dateString);
+        return 'Date inconnue';
+      }
+      
+      return formatDistanceToNow(date, { addSuffix: true, locale: fr });
     } catch (error) {
       console.error("Erreur lors du formatage de la date:", error);
-      return 'date inconnue';
+      return 'Date inconnue';
     }
   };
-  
   
   return (
     <div className="post">
@@ -63,10 +74,16 @@ const Post = ({ post }) => {
             src={user.profilePic || user.profilePicture || DEFAULT_PROFILE_PIC}
             alt={user.username || user.name || 'Utilisateur'} 
             className="user-avatar" 
+            onError={(e) => {
+              e.target.src = DEFAULT_PROFILE_PIC;
+              console.error("Erreur de chargement de l'image de profil");
+            }}
           />
           <div className="user-info">
             <span className="user-name">{user.username || user.name || 'Utilisateur inconnu'}</span>
-            <span className="post-timestamp">{formatDate(updatedPost.createdAt)}</span>
+            <span className="post-timestamp">
+              {updatedPost.createdAt ? formatDate(updatedPost.createdAt) : 'Date inconnue'}
+            </span>
           </div>
         </Link>
         
@@ -84,7 +101,7 @@ const Post = ({ post }) => {
           <p className="post-text post-empty">Ce post ne contient pas de texte</p>
         )}
 
-        {/* ✅ Affichage de l'image s'il y en a une */}
+        {/* Affichage de l'image s'il y en a une */}
         {updatedPost.media && (
           <div className="post-image-container">
             <img 

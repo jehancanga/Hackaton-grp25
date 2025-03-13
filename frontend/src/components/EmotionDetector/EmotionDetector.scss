@@ -1,11 +1,14 @@
-// frontend/src/components/EmotionDetector/EmotionDetector.scss
 .emotion-detector {
-  max-width: 360px;
-  margin: 20px auto;
-  padding: 15px;
-  border-radius: 12px;
+  position: fixed;
+  top: 170px; /* Ajustez cette valeur selon la hauteur exacte de votre header */
+  right: 20px;
+  width: 280px;
+  max-width: 280px;
   background-color: #f8f9fa;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  z-index: 1000; /* Valeur très élevée pour être au-dessus de tout */
   
   .video-container {
     position: relative;
@@ -51,5 +54,15 @@
       color: #4a59b0;
       text-transform: capitalize;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .emotion-detector {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 20px auto;
+    box-sizing: border-box;
   }
 }

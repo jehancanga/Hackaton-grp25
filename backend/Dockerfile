@@ -10,6 +10,9 @@ RUN mkdir -p uploads
 
 COPY . .
 
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 3000
 
-CMD ["nodemon", "server.js"]
+ENTRYPOINT ["/entrypoint.sh"]
