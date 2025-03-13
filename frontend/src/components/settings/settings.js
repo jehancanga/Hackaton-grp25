@@ -13,9 +13,9 @@ const ProfileSettings = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
-  const [followers, setFollowers] = useState(null);
-  const [following, setFollowing] = useState(null);
-  const [tweets, setTweets] = useState(null);
+  const [followers, setFollowers] = useState(0); // Initialiser à 0 au lieu de null
+  const [following, setFollowing] = useState(0); // Initialiser à 0 au lieu de null
+  const [tweets, setTweets] = useState(0); // Initialiser à 0 au lieu de null
   const [profileImage, setProfileImage] = useState("");
   const [profileImageFile, setProfileImageFile] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -31,9 +31,24 @@ const ProfileSettings = () => {
         if (user) {
           setUsername(user.username || "");
           setBio(user.bio || "");
-          setFollowers(user.followers || 0);
-          setFollowing(user.following || 0);
-          setTweets(user.tweets || 0);
+          
+          // Récupération des compteurs, en s'assurant qu'ils ne sont jamais null ou undefined
+          const followersCount = Array.isArray(user.followers) 
+            ? user.followers.length 
+            : (typeof user.followers === 'number' ? user.followers : 0);
+            
+          const followingCount = Array.isArray(user.following) 
+            ? user.following.length 
+            : (typeof user.following === 'number' ? user.following : 0);
+            
+          const tweetsCount = Array.isArray(user.tweets) 
+            ? user.tweets.length 
+            : (typeof user.tweets === 'number' ? user.tweets : 0);
+          
+          setFollowers(followersCount);
+          setFollowing(followingCount);
+          setTweets(tweetsCount);
+          
           setProfileImage(user.profilePic || "https://via.placeholder.com/150");
         } else {
           console.log("Aucun utilisateur trouvé dans le localStorage");
@@ -77,8 +92,6 @@ const ProfileSettings = () => {
       toast.info("Image sélectionnée. N'oubliez pas de sauvegarder pour l'appliquer.", {
         autoClose: 3000
       });
-
-
     }
   };
 
@@ -163,7 +176,7 @@ const ProfileSettings = () => {
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  borderRadius: '50%'  // Si votre image est censée être ronde
+                  borderRadius: '50%'
                 }}
               />
               <label htmlFor="profile-pic" className="edit-icon">
@@ -176,17 +189,18 @@ const ProfileSettings = () => {
           </div>
         </div>
 
+        {/* Section des stats modifiée pour garantir zéro en cas d'absence de valeur */}
         <div className="profile-stats">
           <div className="stat-item">
-            <span className="stat-value">{tweets === null ? 0 : tweets}</span>
+            <span className="stat-value">{tweets}</span>
             <span className="stat-label">Tweets</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{followers === null ? 0 : followers}</span>
+            <span className="stat-value">{followers}</span>
             <span className="stat-label">Followers</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{following === null ? 0 : following}</span>
+            <span className="stat-value">{following}</span>
             <span className="stat-label">Following</span>
           </div>
         </div>

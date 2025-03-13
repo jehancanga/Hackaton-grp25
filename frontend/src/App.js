@@ -23,7 +23,7 @@ function App() {
           <Route path="/newpost" element={<NewPost />} />
           <Route path="/myposts" element={<MyPosts />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/profil/:userId" element={<ProfilUser />} />
+          <Route path="/profile/:userId" element={<ProfilUser />} />
         </Routes>
  
         <ToastContainer

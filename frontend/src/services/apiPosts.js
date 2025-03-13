@@ -42,27 +42,6 @@ export const getUserTweets = async (userId) => {
   }
 };
 
-// ❤️ **Liker un tweet**
-export const likeTweet = async (tweetId) => {
-  try {
-    const response = await axios.post(`${POSTS_URL}/${tweetId}/like`, {}, getAuthHeaders());
-    return response.data;
-  } catch (error) {
-    console.error("Erreur like tweet :", error.response?.data);
-    return null;
-  }
-};
-
-// 🔄 **Retweeter un tweet**
-export const retweet = async (tweetId) => {
-  try {
-    const response = await axios.post(`${POSTS_URL}/${tweetId}/retweet`, {}, getAuthHeaders());
-    return response.data;
-  } catch (error) {
-    console.error("Erreur retweet :", error.response?.data);
-    return null;
-  }
-};
 
 // ❌ **Supprimer un tweet**
 export const deleteTweet = async (tweetId) => {
@@ -86,29 +65,36 @@ export const fetchPosts = async () => {
   }
 };
 
-// src/services/apiPosts.js - Ajouter les fonctions suivantes
+// like sur un tweet**
+export const likeTweet = async (tweetId) => {
+  try {
+      const response = await axios.post(
+          `${POSTS_URL}/${tweetId}/like`, 
+          {}, 
+          getAuthHeaders()
+      );
+      return response.data;
+  } catch (error) {
+      console.error('Error liking tweet:', error);
+      throw error;
+  }
+};
 
 // 💔 **Annuler un like sur un tweet**
 export const unlikeTweet = async (tweetId) => {
   try {
-    const response = await axios.delete(`${POSTS_URL}/${tweetId}/like`, getAuthHeaders());
-    return response.data;
+      const response = await axios.post(
+          `${POSTS_URL}/${tweetId}/like`, 
+          {}, 
+          getAuthHeaders()
+      );
+      return response.data;
   } catch (error) {
-    console.error("Erreur unlike tweet :", error.response?.data);
-    return null;
+      console.error('Error unliking tweet:', error);
+      throw error;
   }
 };
 
-// 🔄 **Annuler un retweet**
-export const unretweet = async (tweetId) => {
-  try {
-    const response = await axios.delete(`${POSTS_URL}/${tweetId}/retweet`, getAuthHeaders());
-    return response.data;
-  } catch (error) {
-    console.error("Erreur unretweet :", error.response?.data);
-    return null;
-  }
-};
 
 // 💬 **Commenter un tweet**
 export const commentTweet = async (tweetId, commentData) => {
@@ -141,3 +127,44 @@ export const likeComment = async (commentId) => {
     throw error;
   }
 };
+
+
+export const retweetPost = async (tweetId) => {
+  try {
+    const response = await axios.post(
+      `${POSTS_URL}/${tweetId}/retweet`,
+      {},
+      getAuthHeaders()
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors du retweet:', error);
+    throw error;
+  }
+};
+
+
+export const unretweet = async (postId) => {
+  // Si vous utilisez le même endpoint pour toggle, cette fonction est identique à retweet
+  // Sinon, ajustez l'URL selon votre API
+  try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/posts/${postId}/retweet`, {
+          method: 'POST', // ou 'DELETE' selon votre API
+          headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+          }
+      });
+      
+      if (!response.ok) {
+          throw new Error("Erreur lors de l'annulation du retweet");
+      }
+      
+      return await response.json();
+  } catch (error) {
+      console.error('Erreur unretweet:', error);
+      throw error;
+  }
+};
+

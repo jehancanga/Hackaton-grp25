@@ -64,6 +64,7 @@ const Post = ({ post }) => {
     }
   };
   
+  
   return (
     <div className="post">
       <div className="post-header">
