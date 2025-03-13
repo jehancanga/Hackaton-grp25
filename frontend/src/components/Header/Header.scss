@@ -1,159 +1,406 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-$primary-color: #4A90E2;
-$secondary-color: #ececec;
-$accent-color: #ff4757;
+ 
+$primary-color: #1da1f2; // Bleu Twitter
+$secondary-color: #f0f0f0; // Gris clair pour le fond
+$accent-color: #ff5a5f; // Rouge pour le bouton de déconnexion
 $text-color: #333;
-
+$max-content-width: 1000px;
+ 
 .header {
   font-family: 'Poppins', sans-serif;
   background: $secondary-color;
-  padding: 10px 20px;
+  padding: 8px 15px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-  
-  /* ✅ Fixe le header et empêche les débordements */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+ 
+  /* Position fixe et gestion des débordements */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   max-width: 100%;
-  box-sizing: border-box; // ✅ Empêche le padding de faire dépasser l’élément
-  z-index: 1000; // ✅ Pour être au premier plan
-
+  box-sizing: border-box;
+  z-index: 1000;
+ 
   .header-top {
     display: flex;
     justify-content: space-between;
-    align-items: center; // ✅ Alignement vertical parfait
-    width: 100%;
-    max-width: 1200px; // ✅ Empêche la barre de recherche de pousser les autres éléments
-    margin: 0 auto; // ✅ Centre tout le header
-  }
-
-  .logo {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: $primary-color;
-    display: flex;
-    align-items: center; // ✅ Assure que le logo est bien centré verticalement
-  }
-
-  .search-bar {
-    display: flex;
     align-items: center;
-    background: white;
-    border-radius: 20px;
-    padding: 5px 10px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    width: 50%; // ✅ Ajuste la largeur pour éviter que ça pousse le reste
-
-    input {
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      padding: 5px;
-      flex: 1;
-      background: transparent;
+    width: 100%;
+    max-width: $max-content-width;
+    margin: 0 auto;
+    padding: 0 5px;
+  }
+ 
+  .logo {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-right: 20px;
+    
+    .logo-link {
+      color: $primary-color;
+      text-decoration: none;
+      
+      &:hover {
+        color: darken($primary-color, 10%);
+      }
     }
-
-    .clear-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      color: $accent-color;
+    
+    @media (max-width: 576px) {
+      font-size: 1.3rem;
     }
   }
-
+ 
+  /* Barre de recherche mise à jour pour correspondre à la capture d'écran */
+  .search-bar {
+    position: relative;
+    width: 40%;
+    max-width: 400px;
+ 
+    @media (min-width: 769px) and (max-width: 991px) {
+      width: 35%;
+    }
+ 
+    .search-form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .search-input-container {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      
+      .search-type-select {
+        background-color: white;
+        border: 1px solid #ccc;
+        border-right: none;
+        border-radius: 4px 0 0 4px;
+        padding: 0 5px;
+        height: 100%;
+        font-size: 0.9rem;
+        outline: none;
+        
+        &:focus {
+          border-color: $primary-color;
+        }
+      }
+      
+      .search-input {
+        flex: 1;
+        height: 100%;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        font-size: 0.9rem;
+        outline: none;
+        
+        &:focus {
+          border-color: $primary-color;
+        }
+      }
+      
+      .search-btn {
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        height: 100%;
+        padding: 0 10px;
+        cursor: pointer;
+        
+        i {
+          font-size: 0.9rem;
+        }
+        
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+    }
+ 
+    /* Filtres de recherche */
+    .search-filters {
+      display: flex;
+      gap: 8px;
+      margin-top: 5px;
+      align-items: center;
+      font-size: 0.85rem;
+      color: $text-color;
+ 
+      .date-filter-select {
+        padding: 2px 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        background-color: white;
+        outline: none;
+      }
+      
+      .popularity-filter {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        
+        input[type="checkbox"] {
+          margin: 0;
+        }
+      }
+      
+      @media (max-width: 991px) {
+        gap: 5px;
+      }
+    }
+ 
+    /* Résultats de recherche */
+    .search-results {
+      position: absolute;
+      top: 60px; // Ajusté pour le nouveau design
+      left: 0;
+      width: 100%;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+      padding: 8px;
+      display: block; // Modifié
+      z-index: 1010;
+ 
+      .result-section {
+        margin-bottom: 8px;
+ 
+        h4 {
+          font-size: 13px;
+          font-weight: bold;
+          margin-bottom: 4px;
+          color: $primary-color;
+        }
+ 
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+ 
+          .result-item {
+            padding: 5px 8px;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+           
+            &:hover {
+              background: #f1f1f1;
+            }
+            
+            a {
+              text-decoration: none;
+              color: $text-color;
+              display: block;
+              
+              &:hover {
+                color: $primary-color;
+              }
+            }
+          }
+        }
+      }
+ 
+      .no-results {
+        text-align: center;
+        color: $text-color;
+        font-size: 0.85rem;
+        padding: 6px;
+      }
+ 
+      .view-all-results {
+        text-align: center;
+        margin-top: 6px;
+       
+        button {
+          background: $primary-color;
+          color: white;
+          padding: 5px 8px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 0.85rem;
+ 
+          &:hover {
+            background: darken($primary-color, 10%);
+          }
+        }
+      }
+    }
+  }
+ 
   .user-info {
     display: flex;
     align-items: center;
-    gap: 10px;
-
+    gap: 8px;
+ 
     .user-avatar {
-      width: 40px;
-      height: 40px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid $primary-color;
+      border: 1.5px solid $primary-color;
     }
-
+ 
     .username-link {
       text-decoration: none;
       color: $text-color;
       font-weight: 600;
+      font-size: 0.95rem;
+      
+      @media (max-width: 576px) {
+        max-width: 80px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
-
+ 
     .logout-btn {
       background: $accent-color;
       color: white;
       border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
+      padding: 4px 8px;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: 0.3s;
-
+ 
       &:hover {
         background: darken($accent-color, 10%);
       }
     }
   }
-
+  
+  .auth-buttons {
+    display: flex;
+    gap: 10px;
+    
+    .login-btn, .register-btn {
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+    
+    .login-btn {
+      background-color: transparent;
+      border: 1px solid $primary-color;
+      color: $primary-color;
+      
+      &:hover {
+        background-color: rgba(29, 161, 242, 0.1);
+      }
+    }
+    
+    .register-btn {
+      background-color: $primary-color;
+      color: white;
+      
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+ 
   .nav-links {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding-top: 10px;
+    gap: 15px;
+    padding-top: 8px;
+    margin-top: 8px;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
-    width: 100%; // ✅ S'assure qu'il ne dépasse pas sur la droite
-
+    width: 100%;
+    max-width: $max-content-width;
+    margin-left: auto;
+    margin-right: auto;
+ 
     .nav-item {
       text-decoration: none;
       color: $text-color;
-      font-weight: 600;
-      padding: 8px 12px;
-      transition: 0.3s;
-
+      font-weight: 500;
+      padding: 6px 10px;
+      transition: 0.2s;
+      font-size: 0.95rem;
+ 
       &:hover {
         color: $primary-color;
       }
-    }
-
-    .login-btn, .register-btn {
-      background: $primary-color;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 5px;
-      transition: 0.3s;
-
-      &:hover {
-        background: darken($primary-color, 10%);
+      
+      &.active {
+        color: $primary-color;
+        border-bottom: 2px solid $primary-color;
       }
     }
   }
-
+ 
+  // Breakpoints responsive
   @media (max-width: 768px) {
+    padding: 8px 10px;
+    
     .header-top {
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
-
+ 
     .search-bar {
-      width: 90%;
+      width: 100%;
+      max-width: 100%;
+      order: 2;
     }
-
+    
+    .logo {
+      order: 1;
+    }
+    
+    .user-info, .auth-buttons {
+      order: 3;
+      margin-top: 5px;
+      align-self: flex-end;
+    }
+ 
     .nav-links {
-      flex-direction: column;
-      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 5px 10px;
+      
+      .nav-item {
+        padding: 5px 8px;
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .nav-links {
+      justify-content: space-around;
+      
+      .nav-item {
+        font-size: 0.85rem;
+        padding: 4px 6px;
+      }
     }
   }
 }
-
+ 
 body {
-  padding-top: 90px;
+  padding-top: 85px;
   overflow-x: hidden;
   margin: 0;
   box-sizing: border-box;
+  
+  @media (max-width: 768px) {
+    padding-top: 130px;
+  }
+}
+
+.main-container {
+  max-width: $max-content-width;
+  margin: 0 auto;
+  padding: 0 15px;
 }

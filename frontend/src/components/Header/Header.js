@@ -40,7 +40,6 @@ const Header = () => {
     setUser(currentUser);
 
     const startAutoLogout = () => {
-      // Inchangé...
       let timeout;
 
       const resetTimer = () => {
@@ -95,12 +94,9 @@ const Header = () => {
     setShowResults(false);
   };
 
-  // Fonction pour effectuer la recherche (simulée, à remplacer par votre appel API réel)
+  // Fonction pour effectuer la recherche
   const performSearch = (query) => {
     // Exemple de simulation de recherche
-    // À remplacer par votre appel à l'API de recherche
-    
-    // Exemple de données simulées pour la démonstration
     setTimeout(() => {
       const mockResults = {
         tweets: searchType === "all" || searchType === "tweets" ? 
@@ -187,11 +183,13 @@ const Header = () => {
     <nav className="header">
       <div className="header-top">
         {/* Logo */}
-        <div className="logo">J-IPSSI.</div>
+        <div className="logo">
+          <Link to="/" className="logo-link">J-IPSSI.</Link>
+        </div>
 
-        {/* Barre de recherche améliorée */}
+        {/* Barre de recherche mise à jour avec le nouveau style */}
         <div className="search-bar">
-          <form onSubmit={navigateToSearch}>
+          <form onSubmit={navigateToSearch} className="search-form">
             <div className="search-input-container">
               <select
                 className="search-type-select"
@@ -208,17 +206,16 @@ const Header = () => {
                 placeholder="Rechercher..."
                 value={searchQuery}
                 onChange={handleSearchChange}
+                className="search-input"
               />
-              {searchQuery && (
-                <button type="button" className="clear-btn" onClick={clearSearch}>
-                  ✖
-                </button>
-              )}
-              <button type="submit" className="search-btn">🔍</button>
+              <button type="submit" className="search-btn">
+                <i className="fa fa-search"></i>
+              </button>
             </div>
 
             <div className="search-filters">
               <select
+                className="date-filter-select"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
               >
@@ -227,13 +224,13 @@ const Header = () => {
                 <option value="week">Cette semaine</option>
                 <option value="month">Ce mois</option>
               </select>
-              <label>
+              <label className="popularity-filter">
                 <input
                   type="checkbox"
                   checked={popularityFilter}
                   onChange={() => setPopularityFilter(!popularityFilter)}
                 />
-                Les plus populaires
+                <span>Les plus populaires</span>
               </label>
             </div>
           </form>
@@ -300,7 +297,7 @@ const Header = () => {
         </div>
 
         {/* Profil utilisateur */}
-        {user && (
+        {user ? (
           <div className="user-info">
             <img 
               src={user.profilePic || DEFAULT_PROFILE_PIC} 
@@ -318,6 +315,11 @@ const Header = () => {
               Disconnect
             </button>
           </div>
+        ) : (
+          <div className="auth-buttons">
+            <Link to="/login" className="login-btn">Connexion</Link>
+            <Link to="/register" className="register-btn">Inscription</Link>
+          </div>
         )}
       </div>
 
@@ -326,14 +328,6 @@ const Header = () => {
         <Link to="/" className="nav-item">My Feed</Link>
         {user && <Link to="/myposts" className="nav-item">My Posts</Link>}
         {user && <Link to="/newpost" className="nav-item">New Post</Link>}
-        
-        {/* Authentification */}
-        {!user && (
-          <>
-            <Link to="/login" className="nav-item login-btn">Connexion</Link>
-            <Link to="/register" className="nav-item register-btn">New Account</Link>
-          </>
-        )}
       </div>
     </nav>
   );
