@@ -284,48 +284,50 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
-
 // 👥 Récupérer les abonnés d'un utilisateur
 export const getUserFollowers = async (req, res) => {
+  console.log("=== getUserFollowers ===");
+  console.log("User ID demandé:", req.params.id);
+  console.log("Utilisateur authentifié:", req.user?._id);
+  
   try {
-      // Vérifier que l'utilisateur est authentifié (ce que le middleware protect devrait faire)
-      if (!req.user) {
-          return res.status(401).json({ message: "Utilisateur non authentifié" });
-      }
-      
       const user = await User.findById(req.params.id).populate("followers", "username profilePic");
       
       if (!user) {
+          console.log("❌ Utilisateur non trouvé");
           return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
       
+      console.log("✅ Followers trouvés:", user.followers.length);
       res.json(user.followers);
   } catch (error) {
-      console.error("Erreur getUserFollowers:", error);
+      console.error("❌ Erreur getUserFollowers:", error);
       res.status(500).json({ message: "Erreur serveur" });
   }
 };
 
 // 👥 Récupérer la liste des abonnements d'un utilisateur
 export const getUserFollowing = async (req, res) => {
+  console.log("=== getUserFollowing ===");
+  console.log("User ID demandé:", req.params.id);
+  console.log("Utilisateur authentifié:", req.user?._id);
+  
   try {
-      // Vérifier que l'utilisateur est authentifié
-      if (!req.user) {
-          return res.status(401).json({ message: "Utilisateur non authentifié" });
-      }
-      
       const user = await User.findById(req.params.id).populate("following", "username profilePic");
       
       if (!user) {
+          console.log("❌ Utilisateur non trouvé");
           return res.status(404).json({ message: "Utilisateur non trouvé" });
       }
       
+      console.log("✅ Following trouvés:", user.following.length);
       res.json(user.following);
   } catch (error) {
-      console.error("Erreur getUserFollowing:", error);
+      console.error("❌ Erreur getUserFollowing:", error);
       res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
 
 
 // 📛 Bloquer un utilisateur
@@ -484,3 +486,46 @@ export const getFollowStatus = async (req, res) => {
     }
   };
   
+  export const getUserStats = async (req, res) => {
+    try {
+      let userId;
+      
+      // Si l'endpoint est /api/users/me/stats, utilisez l'ID de l'utilisateur connecté
+      if (req.params.id === 'me') {
+        userId = req.user._id;
+      } else {
+        // Sinon, utilisez l'ID spécifié dans la requête
+        userId = req.params.id;
+      }
+  
+      // Vérifier si l'ID est valide
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'ID utilisateur invalide' });
+      }
+  
+      // Trouver l'utilisateur pour vérifier qu'il existe
+      const user = await User.findById(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      }
+  
+      // Compter les tweets
+      const tweetCount = await Tweet.countDocuments({ user: userId });
+      
+      // Compter les followers (personnes qui suivent cet utilisateur)
+      const followerCount = await Follower.countDocuments({ following: userId });
+      
+      // Compter les utilisateurs suivis par cet utilisateur
+      const followingCount = await Follower.countDocuments({ follower: userId });
+  
+      res.status(200).json({
+        tweetCount,
+        followerCount,
+        followingCount
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques:', error);
+      res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    }
+  };

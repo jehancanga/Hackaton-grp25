@@ -137,3 +137,47 @@ export const unblockUser = async (userId) => {
     return null;
   }
 };
+
+export const getUserStats = async (userId) => {
+  try {
+    if (!userId) {
+      throw new Error("ID utilisateur requis pour récupérer les statistiques");
+    }
+
+    // Récupérer le token d'authentification
+    const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+      throw new Error("Vous devez être connecté pour accéder à cette ressource");
+    }
+
+    // Faire la requête à l'API
+    const response = await fetch(`/api/users/${userId}/stats`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // Vérifier si la réponse est OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Erreur ${response.status} lors de la récupération des statistiques`);
+    }
+
+    // Récupérer les données
+    const data = await response.json();
+    console.log("📊 Statistiques récupérées:", data);
+    
+    return data;
+  } catch (error) {
+    console.error("❌ Erreur dans getUserStats:", error);
+    // On retourne un objet vide plutôt qu'une erreur pour éviter de casser le flux
+    return {
+      tweetCount: 0,
+      followerCount: 0,
+      followingCount: 0
+    };
+  }
+};

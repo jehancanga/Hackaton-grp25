@@ -1,10 +1,10 @@
-/* FollowersModal.scss */
-.modal-overlay {
+
+.followers-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -12,181 +12,161 @@
   z-index: 1000;
 }
 
-.modal-container {
+.followers-modal {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   width: 90%;
   max-width: 500px;
   max-height: 80vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  border-bottom: 1px solid #e6e6e6;
   
-  h2 {
-    margin: 0;
-    font-size: 18px;
-  }
-  
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
+  .modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     
-    &:hover {
-      color: #000;
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #555;
+      
+      &:hover {
+        color: #000;
+      }
     }
   }
-}
-
-.modal-tabs {
-  display: flex;
-  border-bottom: 1px solid #e6e6e6;
   
-  .tab-btn {
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    
+    .tab-button {
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      color: #555;
+      
+      &.active {
+        color: #1DA1F2;
+        border-bottom: 2px solid #1DA1F2;
+      }
+      
+      &:hover:not(.active) {
+        background-color: rgba(29, 161, 242, 0.1);
+      }
+    }
+  }
+  
+  .modal-content {
+    padding: 10px 0;
+    overflow-y: auto;
     flex: 1;
-    background: none;
-    border: none;
-    padding: 12px 0;
-    font-size: 16px;
-    cursor: pointer;
     
-    &.active {
-      font-weight: bold;
-      color: #1da1f2;
-      border-bottom: 2px solid #1da1f2;
+    .loading, .error, .empty-message {
+      padding: 20px;
+      text-align: center;
+      color: #555;
     }
     
-    &:hover:not(.active) {
-      background-color: #f7f7f7;
+    .error {
+      color: #e0245e;
+    }
+    
+    .users-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      
+      .user-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        border-bottom: 1px solid #f5f5f5;
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 15px;
+        }
+        
+        .user-name {
+          font-weight: 500;
+        }
+      }
     }
   }
 }
 
-.modal-content {
-  flex: 1;
-  overflow-y: auto;
-  max-height: 50vh;
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  color: #666;
-}
-
-.user-list {
-  list-style-type: none;
+.users-list {
+  list-style: none;
   padding: 0;
   margin: 0;
   
   .user-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 12px 20px;
-    border-bottom: 1px solid #e6e6e6;
-    
-    &:last-child {
-      border-bottom: none;
-    }
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer; /* Ajout d'un curseur pointer pour indiquer que c'est cliquable */
+    transition: background-color 0.2s ease; /* Animation de transition au survol */
     
     &:hover {
-      background-color: #f7f7f7;
-    }
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
-  }
-  
-  .user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 12px;
-  }
-  
-  .user-details {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .user-name {
-    font-weight: bold;
-    margin-bottom: 2px;
-  }
-  
-  .user-bio {
-    margin: 0;
-    font-size: 14px;
-    color: #666;
-  }
-  
-  .follow-btn {
-    padding: 6px 16px;
-    border-radius: 20px;
-    border: 1px solid #1da1f2;
-    background-color: #1da1f2;
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    
-    &.unfollow {
-      background-color: white;
-      color: #1da1f2;
+      background-color: rgba(29, 161, 242, 0.1); /* Couleur bleutée au survol */
     }
     
-    &:hover {
-      opacity: 0.9;
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    
+    .user-name {
+      font-weight: 500;
+      transition: color 0.2s ease; 
+    }
+    
+    &:hover .user-name {
+      color: #1DA1F2; 
+    }
+    
+   
+    &:after {
+      content: '›';
+      margin-left: auto;
+      font-size: 20px;
+      color: #ccc;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+    
+    &:hover:after {
+      transform: translateX(3px);
+      color: #1DA1F2;
     }
   }
 }
 
-.empty-message {
-  text-align: center;
-  padding: 30px 20px;
-  color: #666;
-  font-size: 15px;
-}
-
-.error-message {
-  text-align: center;
-  padding: 20px;
-  color: #e0245e;
-  font-size: 15px;
-}
-
-.modal-footer {
-  padding: 15px;
-  text-align: center;
-  border-top: 1px solid #e6e6e6;
-  
-  .fermer-btn {
-    padding: 8px 20px;
-    border-radius: 20px;
-    background-color: #e6e6e6;
-    border: none;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    
-    &:hover {
-      background-color: #d6d6d6;
-    }
-  }
-}

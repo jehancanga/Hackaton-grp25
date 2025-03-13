@@ -1,160 +1,204 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./FollowersModal.scss";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import './FollowersModal.scss';
 
-const FollowersModal = ({ userId, isOpen, onClose, initialTab = "followers" }) => {
+// Ajout de refreshStats aux props
+const FollowersModal = ({ userId, isOpen, onClose, initialTab = 'followers', refreshStats }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Mettre à jour l'onglet actif lorsqu'il change via les props
+  // Réinitialiser les données quand le modal s'ouvre ou se ferme
   useEffect(() => {
     if (isOpen) {
       setActiveTab(initialTab);
+      fetchData();
+    } else {
+      // Réinitialiser les états quand le modal se ferme
+      setFollowers([]);
+      setFollowing([]);
+      setError(null);
     }
-  }, [initialTab, isOpen]);
+  }, [isOpen, initialTab, userId]);
 
-  // Charger les données lorsque le modal est ouvert ou l'onglet change
+  // Charger les données quand l'onglet change
   useEffect(() => {
     if (isOpen && userId) {
       fetchData();
     }
-  }, [isOpen, userId, activeTab]);
+  }, [activeTab]);
 
   const fetchData = async () => {
     if (!userId) {
       setError("ID utilisateur manquant");
-      setLoading(false);
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     
-    console.log(`Chargement des données pour l'onglet ${activeTab}, userId: ${userId}`);
-    
     try {
-      const endpoint = activeTab === "followers" 
-        ? `/api/users/${userId}/followers`
-        : `/api/users/${userId}/following`;
+      const token = localStorage.getItem('authToken');
       
-      console.log(`Appel API: ${endpoint}`);
-      const response = await axios.get(endpoint);
-      console.log(`Réponse API (${activeTab}):`, response);
-      
-      const userData = response.data;
-      
-      if (!userData) {
-        throw new Error("Données vides reçues de l'API");
+      if (!token) {
+        throw new Error("Vous n'êtes pas connecté");
       }
       
-      if (Array.isArray(userData)) {
-        if (activeTab === "followers") {
-          setFollowers(userData);
-          console.log(`${userData.length} followers chargés`);
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+      
+      console.log(`Chargement des ${activeTab} pour l'utilisateur ${userId}`);
+      
+      const response = await axios.get(`/api/users/${userId}/${activeTab}`, config);
+      
+      // Vérifier la structure des données
+      if (Array.isArray(response.data)) {
+        console.log(`Nombre de ${activeTab} reçus:`, response.data.length);
+        if (activeTab === 'followers') {
+          setFollowers(response.data);
         } else {
-          setFollowing(userData);
-          console.log(`${userData.length} followings chargés`);
+          setFollowing(response.data);
         }
       } else {
-        console.error("Format de données inattendu:", userData);
-        throw new Error("Format de données inattendu: les données ne sont pas un tableau");
+        console.error("Format de données inattendu:", response.data);
+        setError("Format de données incorrect");
       }
-    } catch (err) {
-      console.error(`Erreur lors du chargement des ${activeTab}:`, err);
-      setError(`Impossible de charger les ${activeTab === "followers" ? "abonnés" : "abonnements"}: ${err.message}`);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des données:", error);
+      let errorMessage = "Une erreur est survenue";
+      
+      if (error.response) {
+        if (error.response.status === 401) {
+          errorMessage = "Session expirée. Veuillez vous reconnecter.";
+        } else {
+          errorMessage = `Erreur ${error.response.status}: ${error.response.data?.message || 'Une erreur est survenue'}`;
+        }
+      } else {
+        errorMessage = error.message || "Impossible de contacter le serveur";
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFollow = async (targetUserId) => {
-    if (!userId || !targetUserId) return;
-    
-    try {
-      console.log(`Tentative de follow/unfollow de l'utilisateur: ${targetUserId}`);
-      await axios.post(`/api/users/follow/${targetUserId}`);
-      console.log("Action follow/unfollow réussie");
+  // Fonction pour naviguer vers le profil d'un utilisateur
+
+    const navigateToUserProfile = (userId) => {
+      // Fermer le modal d'abord
+      onClose();
       
-      // Mise à jour des données après l'action
-      fetchData();
-    } catch (err) {
-      console.error("Erreur lors du follow/unfollow:", err);
-      setError(`Erreur: ${err.message}`);
+      // Appeler refreshStats si disponible
+      if (typeof refreshStats === 'function') {
+        console.log("📊 Rafraîchissement des statistiques avant navigation...");
+        refreshStats();
+      }
+      
+      // Puis naviguer vers la page du profil utilisateur
+      navigate(`/profile/${userId}`);
+    };
+
+  // Fonction pour gérer la fermeture personnalisée qui rafraîchit les statistiques
+  const handleClose = () => {
+    // Appeler refreshStats avant de fermer (si disponible)
+    if (refreshStats) {
+      refreshStats();
     }
+    
+    // Puis appeler la fonction onClose originale
+    onClose();
   };
 
-  // Si le modal n'est pas ouvert, ne rien afficher
+  // SI le modal n'est pas ouvert, ne rien afficher
   if (!isOpen) return null;
 
-  // Déterminer quelles données afficher
-  const displayData = activeTab === "followers" ? followers : following;
-
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
+    <div className="followers-modal-overlay" onClick={handleClose}>
+      <div className="followers-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{activeTab === "followers" ? "Abonnés" : "Abonnements"}</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <h2>{activeTab === 'followers' ? 'Abonnés' : 'Abonnements'}</h2>
+          <button className="close-button" onClick={handleClose}>×</button>
         </div>
         
-        <div className="modal-tabs">
+        <div className="tabs">
           <button 
-            className={`tab-btn ${activeTab === "followers" ? "active" : ""}`}
-            onClick={() => setActiveTab("followers")}
+            className={`tab-button ${activeTab === 'followers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('followers')}
           >
             Abonnés
           </button>
           <button 
-            className={`tab-btn ${activeTab === "following" ? "active" : ""}`}
-            onClick={() => setActiveTab("following")}
+            className={`tab-button ${activeTab === 'following' ? 'active' : ''}`}
+            onClick={() => setActiveTab('following')}
           >
             Abonnements
           </button>
         </div>
-        
+
         <div className="modal-content">
           {loading ? (
-            <div className="loading-spinner">Chargement...</div>
+            <div className="loading">Chargement...</div>
           ) : error ? (
-            <div className="error-message">{error}</div>
-          ) : displayData.length > 0 ? (
-            <ul className="user-list">
-              {displayData.map((user) => (
-                <li key={user._id || `user-${Math.random()}`} className="user-item">
-                  <div className="user-info">
+            <div className="error">{error}</div>
+          ) : activeTab === 'followers' ? (
+            followers.length === 0 ? (
+              <div className="empty-message">Aucun abonné pour le moment</div>
+            ) : (
+              <ul className="users-list">
+                {followers.map(user => (
+                  <li 
+                    key={user._id} 
+                    className="user-item"
+                    onClick={() => navigateToUserProfile(user._id)}
+                  >
                     <img 
                       src={user.profilePic || "https://via.placeholder.com/40"} 
-                      alt={`Avatar de ${user.username}`} 
-                      className="user-avatar" 
+                      alt={user.username} 
+                      className="user-avatar"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/40";
+                      }}
                     />
-                    <div className="user-details">
-                      <span className="user-name">{user.username}</span>
-                      {user.bio && <p className="user-bio">{user.bio.substring(0, 50)}{user.bio.length > 50 ? "..." : ""}</p>}
-                    </div>
-                  </div>
-                  {userId !== (user._id || user.id) && (
-                    <button 
-                      className={`follow-btn ${user.isFollowedByMe ? "unfollow" : ""}`}
-                      onClick={() => handleFollow(user._id || user.id)}
-                    >
-                      {user.isFollowedByMe ? "Ne plus suivre" : "Suivre"}
-                    </button>
-                  )}
+                    <span className="user-name">{user.username}</span>
+                  </li>
+                ))}
+              </ul>
+            )
+          ) : following.length === 0 ? (
+            <div className="empty-message">Vous ne suivez personne pour le moment</div>
+          ) : (
+            <ul className="users-list">
+              {following.map(user => (
+                <li 
+                  key={user._id} 
+                  className="user-item"
+                  onClick={() => navigateToUserProfile(user._id)}
+                >
+                  <img 
+                    src={user.profilePic || "https://via.placeholder.com/40"} 
+                    alt={user.username} 
+                    className="user-avatar"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://via.placeholder.com/40";
+                    }}
+                  />
+                  <span className="user-name">{user.username}</span>
                 </li>
               ))}
             </ul>
-          ) : (
-            <div className="empty-message">
-              {activeTab === "followers" ? "Aucun abonné" : "Aucun abonnement"}
-            </div>
           )}
-        </div>
-        
-        <div className="modal-footer">
-          <button className="fermer-btn" onClick={onClose}>Fermer</button>
         </div>
       </div>
     </div>

@@ -16,7 +16,8 @@ import {
     blockUser,
     unblockUser,
     identifier,
-    getFollowStatus 
+    getFollowStatus,
+    getUserStats
 } from "../controllers/userController.js";
 
 import { protect } from "../middlewares/authMiddleware.js";
@@ -40,5 +41,6 @@ router.get("/:id/following", protect, getUserFollowing);
 router.post("/:id/block", protect, blockUser);
 router.post("/:id/unblock", protect, unblockUser);
 router.get("/:identifier", protect, identifier);
+router.get('/:id/stats', protect, getUserStats);
 
 export default router;

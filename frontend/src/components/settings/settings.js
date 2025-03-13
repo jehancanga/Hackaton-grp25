@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getCurrentUser, updateUserProfile } from "../../services/apiUsers";
 import "./settings.scss";
-import FollowersModal from '..//Followermodal/FollowersModal';
+import FollowersModal from '../Followermodal/FollowersModal';
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("authToken");
@@ -30,13 +30,31 @@ const ProfileSettings = () => {
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
+    // Vérifier l'authentification au chargement
+    if (!isAuthenticated()) {
+      toast.error("Veuillez vous connecter pour accéder à vos paramètres");
+      // Rediriger vers la page de connexion
+      window.location.href = '/login';
+      return;
+    }
+
     const fetchUserData = async () => {
       setIsLoading(true);
       try {
         const user = getCurrentUser();
         if (user) {
+          console.log("✅ Utilisateur récupéré:", user);
           setCurrentUser(user);
-          setUserId(user._id || user.id || "");
+          
+          // S'assurer que l'ID utilisateur est bien défini
+          const userIdValue = user._id || user.id || "";
+          console.log("👤 ID utilisateur:", userIdValue);
+          
+          if (!userIdValue) {
+            console.warn("⚠️ ID utilisateur manquant dans les données utilisateur");
+          }
+          
+          setUserId(userIdValue);
           
           const usernameValue = user.username || "";
           setUsername(usernameValue);
@@ -63,9 +81,11 @@ const ProfileSettings = () => {
           setProfileImage(user.profilePic || "https://via.placeholder.com/150");
         } else {
           toast.info("Veuillez vous connecter pour voir votre profil");
+          // Redirection vers la page de connexion si aucun utilisateur
+          window.location.href = '/login';
         }
       } catch (error) {
-        console.error("Erreur lors du chargement des données:", error);
+        console.error("❌ Erreur lors du chargement des données:", error);
         toast.error("Erreur lors du chargement des données de profil");
       } finally {
         setIsLoading(false);
@@ -185,11 +205,39 @@ const ProfileSettings = () => {
   };
 
   const handleOpenFollowersModal = () => {
+    // Vérifier que l'utilisateur est authentifié avant d'ouvrir le modal
+    if (!isAuthenticated()) {
+      toast.error("Vous devez être connecté pour voir vos abonnés");
+      return;
+    }
+    
+    // Vérifier que l'ID utilisateur existe
+    if (!userId) {
+      console.error("❌ Impossible d'ouvrir le modal: ID utilisateur manquant");
+      toast.error("Une erreur est survenue. Veuillez rafraîchir la page.");
+      return;
+    }
+    
+    console.log("🔍 Ouverture du modal des abonnés pour l'utilisateur:", userId);
     setFollowModalType('followers');
     setFollowModalVisible(true);
   };
   
   const handleOpenFollowingModal = () => {
+    // Vérifier que l'utilisateur est authentifié avant d'ouvrir le modal
+    if (!isAuthenticated()) {
+      toast.error("Vous devez être connecté pour voir vos abonnements");
+      return;
+    }
+    
+    // Vérifier que l'ID utilisateur existe
+    if (!userId) {
+      console.error("❌ Impossible d'ouvrir le modal: ID utilisateur manquant");
+      toast.error("Une erreur est survenue. Veuillez rafraîchir la page.");
+      return;
+    }
+    
+    console.log("🔍 Ouverture du modal des abonnements pour l'utilisateur:", userId);
     setFollowModalType('following');
     setFollowModalVisible(true);
   };
@@ -293,13 +341,15 @@ const ProfileSettings = () => {
         </form>
       )}
   
-      {/* Le modal de followers/following */}
-      <FollowersModal 
-        userId={userId}
-        isOpen={followModalVisible}
-        onClose={() => setFollowModalVisible(false)}
-        initialTab={followModalType}
-      />
+      {/* Ne montrer le modal que si userId existe et que le modal est visible */}
+      {userId && followModalVisible && (
+        <FollowersModal 
+          userId={userId}
+          isOpen={followModalVisible}
+          onClose={() => setFollowModalVisible(false)}
+          initialTab={followModalType}
+        />
+      )}
     </div>
   );
 };
