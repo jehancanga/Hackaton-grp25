@@ -1,24 +1,101 @@
 .myposts {
-    max-width: 600px;
-    margin: auto;
-    margin-top: 1em;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  
-    h2 {
-      text-align: center;
-      color: #4a59b0;
-    }
-  
-    .error {
-      color: red;
-      text-align: center;
-    }
-  
-    .post-list {
-      margin-top: 20px;
-    }
+  max-width: 600px;
+  margin: auto;
+  margin-top: 1.5em;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    color: #4a59b0;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+  }
+
+  .loading-text {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    margin: 2rem 0;
+  }
+
+  .error {
+    color: #ff5252;
+    text-align: center;
+    background-color: #ffebee;
+    padding: 10px;
+    border-radius: 6px;
+    margin: 1rem 0;
+  }
+
+  .no-posts {
+    text-align: center;
+    color: #777;
+    margin: 2rem 0;
+    font-size: 1.1rem;
+  }
+
+  .post-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
   
+  /* Styles pour le filtrage par hashtags */
+  .hashtag-filters {
+    margin: 1.5rem 0;
+    
+    h3 {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    
+    .hashtag-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1rem;
+      
+      .hashtag-pill {
+        background-color: #f5f8fa;
+        color: #657786;
+        border: 1px solid #e1e8ed;
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+          background-color: #e8f5fd;
+          color: #1da1f2;
+          border-color: #1da1f2;
+        }
+        
+        &.active {
+          background-color: #1da1f2;
+          color: white;
+          border-color: #1da1f2;
+        }
+      }
+    }
+    
+    .clear-filter {
+      background: none;
+      border: none;
+      color: #657786;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 5px;
+      font-size: 0.9rem;
+      
+      &:hover {
+        color: #e0245e;
+      }
+    }
+  }
+}

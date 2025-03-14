@@ -1,11 +1,15 @@
+// services/apiEmotion.js
 import axios from 'axios';
+import { API_URL, getAxiosAuthConfig } from './config';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
-const FLASK_URL = process.env.REACT_APP_FLASK_URL || 'http://localhost:5000';
-
-// Récupérer les tweets filtrés par émotion
+// Récupérer les tweets par émotion
 export const getTweetsByEmotion = async (emotion) => {
   try {
+    if (!emotion || emotion === 'all') {
+      const response = await axios.get(`${API_URL}/tweets`);
+      return response.data;
+    }
+    
     const response = await axios.get(`${API_URL}/tweets/emotion/${emotion}`);
     return response.data;
   } catch (error) {
@@ -14,37 +18,32 @@ export const getTweetsByEmotion = async (emotion) => {
   }
 };
 
-// Récupérer les tweets recommandés en fonction de l'émotion
+// Récupérer les tweets recommandés par émotion
 export const getRecommendedTweetsByEmotion = async (emotion) => {
   try {
-    const response = await axios.get(`${API_URL}/tweets/recommended/${emotion}`);
+    const response = await axios.get(
+      `${API_URL}/tweets/recommended/${emotion}`, 
+      getAxiosAuthConfig()
+    );
     return response.data;
   } catch (error) {
-    console.error("Erreur lors de la récupération des recommandations:", error);
+    console.error("Erreur lors de la récupération des tweets recommandés:", error);
     throw error;
   }
 };
 
-// Analyser une image directement via le service Flask
-export const detectEmotion = async (imageData) => {
-  try {
-    const response = await axios.post(`${FLASK_URL}/detect-emotion`, {
-      image: imageData
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Erreur lors de la détection d'émotion:", error);
-    throw error;
-  }
-};
-
-// Lancer une analyse par lot pour les tweets récents
+// Analyser les émotions par lots
 export const batchAnalyzeEmotions = async () => {
   try {
-    const response = await axios.post(`${API_URL}/emotions/batch-analyze`);
+    const response = await axios.post(
+      `${API_URL}/emotions/batch-analyze`, 
+      {}, 
+      getAxiosAuthConfig()
+    );
+    
     return response.data;
   } catch (error) {
-    console.error("Erreur lors de l'analyse par lot:", error);
+    console.error("Erreur lors de l'analyse des émotions par lot:", error);
     throw error;
   }
 };

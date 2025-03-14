@@ -1,5 +1,4 @@
-// src/components/Post/Post.scss
-
+/* Post.scss */
 .post {
   background-color: white;
   border-radius: 12px;
@@ -8,6 +7,11 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.2s ease;
   
+  &.loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
@@ -15,14 +19,14 @@
   .post-header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     margin-bottom: 12px;
     
-    .user-profile {
+    .user-info {
       display: flex;
-      text-decoration: none;
-      color: inherit;
+      cursor: pointer;
       
-      .user-avatar {
+      .avatar {
         width: 48px;
         height: 48px;
         border-radius: 50%;
@@ -30,11 +34,11 @@
         object-fit: cover;
       }
       
-      .user-info {
+      .user-details {
         display: flex;
         flex-direction: column;
         
-        .user-name {
+        .username {
           font-weight: 700;
           font-size: 15px;
           color: #14171a;
@@ -46,47 +50,150 @@
           }
         }
         
-        .post-timestamp {
+        .timestamp {
           font-size: 13px;
           color: #657786;
         }
       }
     }
     
-    .retweet-info {
-      font-size: 13px;
-      color: #657786;
+    .post-badges {
       display: flex;
-      align-items: center;
+      gap: 8px;
       
-      svg {
-        margin-right: 4px;
+      .category-badge {
+        background-color: #f2f2f2;
+        color: #555;
+        font-size: 12px;
+        padding: 3px 8px;
+        border-radius: 12px;
+      }
+      
+      .emotion-badge {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: help;
       }
     }
   }
   
-  .post-body {
+  .post-content {
     margin-bottom: 12px;
     
-    .post-text {
+    p {
       font-size: 15px;
       line-height: 1.5;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       word-break: break-word;
+      
+      .hashtag {
+        color: #1da1f2;
+        font-weight: 500;
+        cursor: pointer;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
     
-    .post-image {
+    /* Style des hashtags en dessous du contenu */
+    .hashtags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0 12px;
+      
+      .hashtag-pill {
+        background-color: #e8f5fd;
+        color: #1da1f2;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 15px;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background-color: #d5ebf7;
+          cursor: pointer;
+        }
+      }
+    }
+    
+    .post-media {
       width: 100%;
       max-height: 400px;
       border-radius: 12px;
       object-fit: cover;
-      margin-top: 8px;
+      margin-top: 10px;
+      border: 1px solid #ebeef0;
+      
+      &:hover {
+        cursor: pointer;
+        opacity: 0.9;
+      }
     }
   }
   
-  .post-comments-section {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #e6ecf0;
+  .post-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 400px;
+    
+    .action-button {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      color: #657786;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.2s;
+      
+      &:hover {
+        background-color: rgba(29, 161, 242, 0.1);
+        color: #1da1f2;
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      
+      .count {
+        margin-left: 5px;
+        font-size: 13px;
+      }
+      
+      &.like-button.active {
+        color: #e0245e;
+        
+        &:hover {
+          background-color: rgba(224, 36, 94, 0.1);
+        }
+      }
+      
+      &.retweet-button.active {
+        color: #17bf63;
+        
+        &:hover {
+          background-color: rgba(23, 191, 99, 0.1);
+        }
+      }
+      
+      &.delete-button:hover {
+        background-color: rgba(224, 36, 94, 0.1);
+        color: #e0245e;
+      }
+    }
+  }
+  
+  &.error {
+    padding: 20px;
+    text-align: center;
+    color: #e0245e;
+    font-style: italic;
   }
 }

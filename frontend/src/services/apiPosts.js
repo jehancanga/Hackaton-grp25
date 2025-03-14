@@ -4,15 +4,25 @@ import { API_URL, getAuthHeaders } from "./api";
 const POSTS_URL = `${API_URL}/tweets`;
 
 // 📝 **Créer un tweet**
-export const createTweet = async (tweetData) => {
+export const createTweet = async (tweetData, token) => {
   try {
-    // tweetData peut maintenant contenir detectedEmotion
-    console.log("📤 Envoi du tweet avec émotion:", tweetData);
+    console.log("📤 Données du tweet à envoyer:", {
+      content: tweetData.content,
+      hasMedia: !!tweetData.media,
+      mediaLength: tweetData.media?.length || 0,
+      hashtags: tweetData.hashtags,
+      emotion: tweetData.detectedEmotion
+    });
     
-    const response = await axios.post(POSTS_URL, tweetData, getAuthHeaders());
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+    
+    const response = await axios.post(POSTS_URL, tweetData, { headers });
     return response.data;
   } catch (error) {
-    console.error("❌ Erreur lors de la création du tweet :", error.response?.data);
+    console.error("❌ Erreur lors de la création du tweet:", error);
     return null;
   }
 };

@@ -101,11 +101,11 @@ const EmotionDetector = ({ onEmotionDetected }) => {
       <div className="controls">
         {!isActive ? (
           <button onClick={startWebcam} className="start-webcam">
-            Activer la webcam
+            Enable webcam
           </button>
         ) : (
           <button onClick={stopWebcam} className="stop-webcam">
-            Désactiver la webcam
+            Disable webcam
           </button>
         )}
       </div>

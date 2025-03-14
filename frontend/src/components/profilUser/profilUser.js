@@ -219,7 +219,7 @@ const handleFollowToggle = async () => {
         localStorage.setItem('user', JSON.stringify(updatedUser));
       }
     } catch (err) {
-      console.warn("Impossible de mettre à jour les données locales:", err);
+      console.warn("Impossible to update data local:", err);
     }
     
   } catch (err) {
@@ -240,7 +240,7 @@ const handleFollowToggle = async () => {
   if (isLoading) {
     return (
       <div className="profile-container loading-container">
-        <div className="loading">Chargement du profil...</div>
+        <div className="loading">Load profil...</div>
       </div>
     );
   }
@@ -249,15 +249,15 @@ const handleFollowToggle = async () => {
     return (
       <div className="profile-container error-container">
         <div className="error">
-          <h3>Erreur</h3>
+          <h3>Error</h3>
           <div>{error}</div>
           {detailedError && (
             <div className="error-details">
-              Détails: {detailedError}
+              Details: {detailedError}
             </div>
           )}
           <button onClick={fetchUserData} className="retry-button">
-            Réessayer
+            Retry
           </button>
         </div>
       </div>
@@ -283,11 +283,11 @@ const handleFollowToggle = async () => {
           <div className="profile-stats">
             <div className="stat">
               <span className="stat-value">{userData.followingCount}</span>
-              <span className="stat-label">Abonnements</span>
+              <span className="stat-label">Subscription</span>
             </div>
             <div className="stat">
               <span className="stat-value">{userData.followersCount}</span>
-              <span className="stat-label">Abonnés</span>
+              <span className="stat-label">Subcriber</span>
             </div>
           </div>
         </div>
@@ -310,7 +310,7 @@ const handleFollowToggle = async () => {
         <h3>Tweets</h3>
         {userData.tweets.length === 0 ? (
           <div className="no-tweets">
-            Cet utilisateur n'a pas encore publié de tweets.
+            User don't have tweets
           </div>
         ) : (
           <div className="tweets-list">
