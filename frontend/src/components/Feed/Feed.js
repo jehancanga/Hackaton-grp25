@@ -85,30 +85,7 @@ const EmotionFeed = () => {
   return (
     <div className="feed emotion-feed">
       <div className="emotion-controls">
-        <div className="emotion-filters">
-          {emotions.map((em) => (
-            <button
-              key={em.id}
-              onClick={() => handleEmotionChange(em.id)}
-              className={`emotion-filter ${emotion === em.id ? 'active' : ''}`}
-              style={{ 
-                backgroundColor: em.color,
-                opacity: emotion === em.id ? 1 : 0.7
-              }}
-            >
-              <span className="emotion-icon">{em.icon}</span>
-              <span className="emotion-label">{em.label}</span>
-            </button>
-          ))}
-        </div>
-        
-        <button 
-          onClick={handleAnalyze}
-          className="analyze-button"
-          disabled={analyzing}
-        >
-          {analyzing ? 'Analyse en cours...' : 'Analyser les émotions'}
-        </button>
+      
       </div>
       
       {!posts || posts.length === 0 ? (

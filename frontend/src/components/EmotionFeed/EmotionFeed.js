@@ -1,5 +1,6 @@
+// components/EmotionFeed/EmotionFeed.jsx
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getTweetsByEmotion, batchAnalyzeEmotions } from '../../services/apiEmotion';
 import Post from '../Post/Post';
 import './EmotionFeed.scss';
@@ -10,25 +11,27 @@ const EmotionFeed = ({ initialEmotion }) => {
   const [error, setError] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [selectedEmotion, setSelectedEmotion] = useState(initialEmotion || 'all');
-  const location = useLocation();
+  const navigate = useNavigate();
+  const { emotion: paramEmotion } = useParams(); // Pour supporter /emotion/:emotion
 
   const emotions = [
-    { id: 'all', label: 'Tous', icon: '🌐' },
-    { id: 'happy', label: 'Heureux', icon: '😊', color: '#FFCE54' },
-    { id: 'sad', label: 'Triste', icon: '😢', color: '#8CC9E8' },
-    { id: 'angry', label: 'En colère', icon: '😠', color: '#FC6E51' },
-    { id: 'surprise', label: 'Surpris', icon: '😲', color: '#AC92EC' },
-    { id: 'fear', label: 'Effrayé', icon: '😨', color: '#A0D468' },
-    { id: 'disgust', label: 'Dégoûté', icon: '🤢', color: '#48CFAD' },
-    { id: 'neutral', label: 'Neutre', icon: '😐', color: '#CCD1D9' }
+    { id: 'all', label: 'all', icon: '🌐' },
+    { id: 'happy', label: 'happy', icon: '😊', color: '#FFCE54' },
+    { id: 'sad', label: 'sad', icon: '😢', color: '#8CC9E8' },
+    { id: 'angry', label: 'angry', icon: '😠', color: '#FC6E51' },
+    { id: 'surprise', label: 'surprise', icon: '😲', color: '#AC92EC' },
+    { id: 'fear', label: 'fear', icon: '😨', color: '#A0D468' },
+    { id: 'disgust', label: 'disgust', icon: '🤢', color: '#48CFAD' },
+    { id: 'neutral', label: 'neutral', icon: '😐', color: '#CCD1D9' }
   ];
   
   useEffect(() => {
-    // Mettre à jour l'émotion sélectionnée si elle est passée par les props
-    if (initialEmotion && initialEmotion !== selectedEmotion) {
-      setSelectedEmotion(initialEmotion);
+    // Priorité: paramètre URL > props initialEmotion > état par défaut
+    const emotionToUse = paramEmotion || initialEmotion || 'all';
+    if (emotionToUse !== selectedEmotion) {
+      setSelectedEmotion(emotionToUse);
     }
-  }, [initialEmotion]);
+  }, [paramEmotion, initialEmotion]);
 
   useEffect(() => {
     loadPosts();
@@ -37,17 +40,14 @@ const EmotionFeed = ({ initialEmotion }) => {
   const loadPosts = async () => {
     try {
       setLoading(true);
-      let fetchedPosts;
+      const fetchedPosts = await getTweetsByEmotion(selectedEmotion);
       
-      if (selectedEmotion === 'all') {
-        // Utiliser l'API existante pour tous les posts
-        const response = await fetch('http://localhost:5001/api/tweets');
-        fetchedPosts = await response.json();
+      if (fetchedPosts && Array.isArray(fetchedPosts)) {
+        setPosts(fetchedPosts);
       } else {
-        fetchedPosts = await getTweetsByEmotion(selectedEmotion);
+        console.error("Format de données inattendu:", fetchedPosts);
+        setPosts([]);
       }
-      
-      setPosts(fetchedPosts);
     } catch (err) {
       console.error("Erreur lors du chargement des posts:", err);
       setError("Impossible de charger les tweets");
@@ -56,8 +56,17 @@ const EmotionFeed = ({ initialEmotion }) => {
     }
   };
   
+  const handleUserClick = (userId) => {
+    navigate(`/profile/${userId}`);
+  };
+  
   const handleEmotionChange = (newEmotion) => {
     setSelectedEmotion(newEmotion);
+    
+    // Si on est sur une route avec paramètre d'émotion, mettre à jour l'URL
+    if (paramEmotion) {
+      navigate(`/emotion/${newEmotion}`);
+    }
   };
   
   const handleAnalyze = async () => {
@@ -75,7 +84,7 @@ const EmotionFeed = ({ initialEmotion }) => {
   };
   
   if (loading) {
-    return <div className="feed-loading">Chargement des tweets...</div>;
+    return <div className="feed-loading">Load tweets...</div>;
   }
   
   if (error) {
@@ -85,7 +94,7 @@ const EmotionFeed = ({ initialEmotion }) => {
   return (
     <div className="emotion-feed">
       <div className="emotion-controls">
-        <h2>Filtrer par émotion</h2>
+        <h2>Filter by emotion</h2>
         <div className="emotion-filters">
           {emotions.map((em) => (
             <button
@@ -108,18 +117,19 @@ const EmotionFeed = ({ initialEmotion }) => {
           className="analyze-button"
           disabled={analyzing}
         >
-          {analyzing ? 'Analyse en cours...' : 'Analyser les émotions des tweets'}
+          {analyzing ? 'Analyzing...' : 'Analyzing tweet emotions'}
         </button>
       </div>
       
-      {!posts || posts.length === 0 ? (
-        <div className="feed-no-posts">Aucun tweet pour cette émotion</div>
+      {(!posts || posts.length === 0) ? (
+        <div className="feed-no-posts">No tweet for this emotion</div>
       ) : (
         <div className="feed-posts">
           {posts.map(post => (
             <Post 
               key={post._id} 
               post={post}
+              onUserClick={handleUserClick}
             />
           ))}
         </div>

@@ -23,13 +23,6 @@
 
 /* Styles spécifiques pour le EmotionFeed */
 .emotion-feed {
-  .emotion-controls {
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin-bottom: 20px;
-  }
   
   .emotion-filters {
     display: flex;
@@ -63,27 +56,6 @@
     
     .emotion-icon {
       font-size: 18px;
-    }
-  }
-  
-  .analyze-button {
-    width: 100%;
-    padding: 10px 15px;
-    background-color: #1da1f2;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    
-    &:hover {
-      background-color: #1a91da;
-    }
-    
-    &:disabled {
-      background-color: #9acaed;
-      cursor: not-allowed;
     }
   }
   

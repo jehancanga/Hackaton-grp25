@@ -1,33 +1,73 @@
 import Tweet from "../models/Tweet.js";
 import { categorizeTweet, extractHashtags } from "../services/categoryService.js";
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import axios from 'axios';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // 📝 Créer un tweet 
 export const createTweet = async (req, res) => {
   try {
-    const { content, media } = req.body;
+    const { content, media, hashtags, detectedEmotion } = req.body;
     const userId = req.user._id;
 
-    // Extraire les hashtags
-    const hashtags = extractHashtags(content);
+    // Extraire les hashtags du contenu si non fournis
+    const extractedHashtags = hashtags || extractHashtags(content);
     
     // Déterminer la catégorie
-    const category = categorizeTweet(content, hashtags);
+    const category = categorizeTweet(content, extractedHashtags);
+
+    // Traitement de l'image si elle est fournie en base64
+    let mediaUrl = media;
+    if (media && media.startsWith('data:image')) {
+      try {
+        // Extraire le type MIME et les données
+        const matches = media.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        
+        if (matches && matches.length === 3) {
+          const type = matches[1];
+          const data = Buffer.from(matches[2], 'base64');
+          
+          // Générer un nom de fichier unique
+          const filename = `tweet_${Date.now()}.${type.split('/')[1] || 'jpg'}`;
+          const filePath = path.join(__dirname, '../uploads', filename);
+          
+          // Créer le répertoire uploads s'il n'existe pas
+          if (!fs.existsSync(path.join(__dirname, '../uploads'))) {
+            fs.mkdirSync(path.join(__dirname, '../uploads'), { recursive: true });
+          }
+          
+          // Écrire le fichier
+          fs.writeFileSync(filePath, data);
+          
+          // Mettre à jour l'URL de l'image
+          mediaUrl = `/uploads/${filename}`;
+        }
+      } catch (err) {
+        console.error("Erreur lors du traitement de l'image:", err);
+        // Continuer avec l'URL original si l'enregistrement échoue
+      }
+    }
 
     const newTweet = new Tweet({
       userId,
       content,
-      media,
-      hashtags,
+      media: mediaUrl,
+      hashtags: extractedHashtags,
       category,
-      detectedEmotion: "neutral" // Valeur par défaut
+      detectedEmotion: detectedEmotion || "neutral"
     });
 
     // Si le tweet contient une image, essayez de détecter l'émotion
-    if (media && media.trim() !== "") {
+    if (mediaUrl && !detectedEmotion) {
       try {
         // Essayer d'analyser l'émotion via le service Flask
-        const flaskResponse = await axios.post('http://localhost:5000/detect-emotion', {
-          image: media
+        const flaskResponse = await axios.post('http://bot:5000/detect-emotion', {
+          image: mediaUrl
         });
         
         if (flaskResponse.data && flaskResponse.data.emotion) {
