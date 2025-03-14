@@ -35,11 +35,11 @@ const MyPosts = () => {
           
           setAvailableHashtags(Array.from(allHashtags));
         } else {
-          setError("Impossible de charger les posts.");
+          setError("Unable to load posts.");
         }
       } catch (err) {
-        console.error("Erreur:", err);
-        setError("Erreur de récupération des posts.");
+        console.error("Error:", err);
+        setError("Error retrieving posts..");
       }
       setLoading(false);
     };
@@ -72,7 +72,7 @@ const MyPosts = () => {
 
   return (
     <div className="myposts">
-      <h2>Mes Publications</h2>
+      <h2>My Publications</h2>
       
       {loading && <p className="loading-text">Load posts...</p>}
       {error && <p className="error">{error}</p>}

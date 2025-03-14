@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-# Installer les dépendances système nécessaires pour PyTorch
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
     libopenblas-dev \
     libopenmpi-dev \
@@ -9,13 +9,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copier les fichiers nécessaires
-COPY requirements.txt .
-COPY app.py .
-COPY models.py .
-COPY app ./app
+# Copier tous les fichiers nécessaires
+COPY . /app
 
-# Installer les autres dépendances Python
+# Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Vérifier la présence du fichier modèle

@@ -277,7 +277,7 @@ const Header = () => {
               <span className="username">{user.username}</span>
             </Link>
             <button className="logout-btn" onClick={handleLogout}>
-              Déconnexion
+              Disconnect
             </button>
           </div>
         )}
