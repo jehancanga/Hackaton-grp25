@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import torch
 import torchvision.transforms as transforms
@@ -9,14 +9,19 @@ import os
 import traceback
 from models import EmotionCNN
 
+app = Flask(__name__, static_folder='.')  # Utilisez le répertoire courant comme dossier statique
+
+
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Définir les émotions (assurez-vous que l'ordre correspond à votre modèle)
 emotions = ["neutral", "happy", "sad", "surprise", "fear", "disgust", "angry"]
 
 # Charger le modèle
-model_path = 'app/models/emotion_model_scripted.pt'
+# model_path = 'app/models/emotion_model_scripted.pt'
+model_path = '/app/app/models/emotion_model_scripted.pt'
 
 # Transformer le modèle si nécessaire
 def load_model(path):
@@ -54,10 +59,22 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-@app.route('/detect-emotion', methods=['POST'])
+@app.route('/detect-emotion', methods=['POST', 'GET', 'OPTIONS'])
 def detect_emotion():
+    # Gestion des requêtes OPTIONS (preflight CORS)
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        return response
+
+    # Gestion des requêtes GET
+    if request.method == 'GET':
+        return jsonify({'message': 'Send a POST request with an image to detect emotion'}), 405
+
     try:
-        # Récupérer l'image depuis la requête
+        # Reste de votre code pour la méthode POST
         data = request.json
         if not data or 'image' not in data:
             return jsonify({'error': 'Aucune image fournie'}), 400
@@ -101,6 +118,10 @@ def detect_emotion():
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'ok'})
+
+@app.route('/')
+def serve_html():
+    return send_from_directory('.', 'test_emotion.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

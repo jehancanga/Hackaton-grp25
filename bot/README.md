@@ -1,7 +1,8 @@
 # Exec dans le rep Bot
 cd bot
-python3 -m http.server 8000
 to connect the link
+http://localhost:5000/
+file:///home/axel/appDev/Hackaton-grp25/bot/test_emotion.html
 
 
 # Sur machine local

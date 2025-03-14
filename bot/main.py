@@ -17,13 +17,34 @@ payload = {
     "image": f"data:image/jpeg;base64,{img_base64}"
 }
 
-# Envoyer la requête à l'API
-response = requests.post("http://localhost:5000/detect-emotion", json=payload)
+# Headers pour la requête
+headers = {
+    'Content-Type': 'application/json'
+}
 
-# Afficher le résultat
-if response.status_code == 200:
-    result = response.json()
-    print(f"Émotion détectée: {result['emotion']}")
-    print(f"Confiance: {result['confidence']:.2f}")
-else:
-    print(f"Erreur: {response.text}")
+# Envoyer la requête à l'API
+try:
+    response = requests.post("http://localhost:5000/detect-emotion", 
+                              json=payload, 
+                              headers=headers)
+    
+    # Afficher des informations détaillées
+    print("Status Code:", response.status_code)
+    print("Response Headers:", response.headers)
+    print("Response Content:", response.text)
+    
+    # Vérifier le statut de la réponse
+    if response.status_code == 200:
+        result = response.json()
+        print(f"Émotion détectée: {result['emotion']}")
+        print(f"Confiance: {result['confidence']:.2f}")
+    else:
+        print(f"Erreur non 200: Status {response.status_code}")
+        print(f"Contenu de l'erreur: {response.text}")
+
+except requests.exceptions.RequestException as e:
+    print(f"Erreur de requête: {e}")
+except json.JSONDecodeError as e:
+    print(f"Erreur de décodage JSON: {e}")
+except Exception as e:
+    print(f"Erreur inattendue: {e}")
